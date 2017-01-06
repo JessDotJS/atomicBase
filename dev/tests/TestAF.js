@@ -2,12 +2,12 @@
  * Created by Computadora on 05-Jan-17.
  */
 
-afSchema.factory('TestAF', ['Data', function(Data){
+afSchema.factory('TestAF', ['Database', function(Database){
 
 
 
     var TestAF = function(){
-        this.data = new Data({
+        this.db = new Database({
 
             /*
             * Refs Related
@@ -35,42 +35,44 @@ afSchema.factory('TestAF', ['Data', function(Data){
             * */
 
             schema: {
-                properties: {
-                    name: {
-                        value: '=',
-                        default: null, // Default = null
-                        rules: { //@TODO Firebase rules generator
-                            read: true,
-                            write: true,
-                            validate: false,
-                            index: false
-                        }
-                    },
-                    smallNumber: {
-                        value: '=',
-                        default: 2
-                    },
-                    biggerNumber: {
-                        value: function(properties){
-                            return properties.smallNumber * 10;
-                        }
-                    },
-                    negativeNumberCopy: {
-                        value: function(properties){
-                            return -(properties.biggerNumber)
-                        }
-                    },
-                    shortDescription: {
-                        value: '='
-                    },
-                    longDescription: {
-                        value: '=',
-                        ifNone: function(){
-                            return 5 - 4;
-                        }
+                name: {
+                    value: '=',
+                    default: null, // When property's value is undefined - Default = null
+                    rules: { //@TODO Firebase rules generator
+                        read: true,
+                        write: true,
+                        validate: false,
+                        index: false
                     }
                 },
-                files: 'single'
+                smallNumber: {
+                    value: '=',
+                    default: 2
+                },
+                biggerNumber: {
+                    value: function(properties){
+                        return properties.smallNumber * 10;
+                    }
+                },
+                negativeNumberCopy: {
+                    value: function(properties){
+                        return -(properties.biggerNumber)
+                    }
+                },
+                shortDescription: {
+                    value: '='
+                },
+                longDescription: {
+                    value: '=',
+                    default: function(){
+                        return 5 - 4;
+                    }
+                },
+                files: 'single',// Default = false
+                priority: function(){
+                    var currentClientTS = new Date().getTime();
+                    return -(currentClientTS);
+                }
             }
         });
     };

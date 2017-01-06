@@ -16,9 +16,9 @@ afSchema.config(['$stateProvider', '$urlRouterProvider',
                 url: '/main',
                 templateUrl: 'tests/tests.html',
                 controller: ['$scope', '$rootScope', 'TestAF', function($scope, $rootScope, TestAF){
-                    var testAf = new TestAF();
-                    console.log(testAf);
-
+                    var testAF = new TestAF();
+                    console.log(testAF);
+                    console.log(testAF.db.schema.buildLocal({name: 'Jess Test'}));
                 }]
             })
     }]);

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="afSchema">
+<head>
+    <meta charset="UTF-8">
+    <title>Atomic Firebase</title>
+
+
+    <link rel="stylesheet" href="vendors/bower_components/angular-material/angular-material.min.css">
+</head>
+<body>
+
+
+<div ui-view></div>
+
+
+
+<!-- Angular -->
+<script src="vendors/bower_components/angular/angular.min.js"></script>
+<script src="vendors/bower_components/angular-messages/angular-messages.min.js"></script>
+<script src="vendors/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="vendors/bower_components/angular-material/angular-material.min.js"></script>
+<script src="vendors/bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="vendors/bower_components/angular-aria/angular-aria.min.js"></script>
+
+
+<!-- Firebase -->
+<script src="vendors/bower_components/firebase/firebase.js"></script>
+
+
+
+
+<!-- Hashtag -->
+
+
+<script src="app.js"></script>
+
+<!-- Schema Related -->
+<script src="atomicFirebase/Schema.js"></script>
+<script src="atomicFirebase/SchemaBuilder.js"></script>
+<script src="atomicFirebase/SchemaPropertyProcessor.js"></script>
+
+<!-- Data Related -->
+<script src="atomicFirebase/RefRegistrator.js"></script>
+<script src="atomicFirebase/Data.js"></script>
+
+
+<!-- AF Object -->
+<script src="tests/TestAF.js"></script>
+
+
+<script>
+
+    /*
+     * Firebase Initializer
+     * */
+
+    /*
+     * Dev Config
+     * */
+    var config = {
+        apiKey: "AIzaSyDYpePpdmeLqgrUylau9P4MmwzLuAefXIo",
+        authDomain: "atomicfirebase.firebaseapp.com",
+        databaseURL: "https://atomicfirebase.firebaseio.com",
+        storageBucket: "atomicfirebase.appspot.com",
+        messagingSenderId: "544536969512"
+    };
+
+    firebase.initializeApp(config);
+
+    /*
+    * Not required in Atomic Firebase
+    * */
+    //var rootRef = firebase.database().ref();
+
+
+</script>
+
+
+</body>
+</html>

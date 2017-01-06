@@ -2,7 +2,7 @@
  * Created by Computadora on 05-Jan-17.
  */
 
-afSchema.factory('TestAF', ['Database', function(Database){
+afSchema.factory('TestAF', [function(){
 
 
 

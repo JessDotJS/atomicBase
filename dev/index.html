@@ -29,25 +29,31 @@
 
 
 
-<!-- Hashtag -->
+
+<!---------------------------
+    Atomic Firebase Database
+---------------------------->
+<script src="atomicFirebase/Database/Database.js"></script>
+<script src="atomicFirebase/Database/Query.js"></script>
+<script src="atomicFirebase/Database/Schema.js"></script>
+<script src="atomicFirebase/Database/RefRegistrator.js"></script>
+<script src="atomicFirebase/Database/ValueHandler.js"></script>
+
+
+
+
+
 
 
 <script src="app.js"></script>
 
-<!-- Database -->
-<script src="atomicFirebase/Database/Database.js"></script>
-
-<!-- Schema -->
-<script src="atomicFirebase/Database/Schema.js"></script>
-
-<!-- Refs Registrator -->
-<script src="atomicFirebase/Database/RefRegistrator.js"></script>
 
 
-
-
-<!-- AF Object -->
+<!-- AF Test Object -->
 <script src="tests/TestAF.js"></script>
+
+
+
 
 
 <script>
@@ -56,9 +62,6 @@
      * Firebase Initializer
      * */
 
-    /*
-     * Dev Config
-     * */
     var config = {
         apiKey: "AIzaSyDYpePpdmeLqgrUylau9P4MmwzLuAefXIo",
         authDomain: "atomicfirebase.firebaseapp.com",

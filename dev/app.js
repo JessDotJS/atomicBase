@@ -4,6 +4,8 @@
 
 var afSchema = angular.module('afSchema', ['ngAnimate', 'ngMaterial', 'ui.router']);
 
+
+
 /*
  * Routes Config
  * */
@@ -15,10 +17,42 @@ afSchema.config(['$stateProvider', '$urlRouterProvider',
             .state('main', {
                 url: '/main',
                 templateUrl: 'tests/tests.html',
-                controller: ['$scope', '$rootScope', 'TestAF', function($scope, $rootScope, TestAF){
+                controller: ['$scope', '$rootScope', function($scope, $rootScope){
+
+
                     var testAF = new TestAF();
-                    console.log(testAF);
-                    console.log(testAF.db.schema.buildLocal({name: 'Jess Test'}));
+
+
+                    testAF.db.query.create({
+                        name: 'Jess M Graterol ',
+                        smallNumber: 8,
+                        shortDescription: 'This is the short description'
+                    }).then(function(snapshotKey){
+                        testAF.db.ref.root.child('test' + '/' + snapshotKey).once("value")
+                            .then(function(snapshot){
+                                testAF.db.query.update(testAF.db.schema.build(snapshot, 'snapshot'))
+                                    .then(function(){
+                                    testAF.db.query.remove(testAF.db.schema.build(snapshot, 'snapshot'))
+                                        .then(function(){
+                                            console.log('Tests passed');
+                                        })
+                                });
+                            });
+                    });
+
+
+
+
+
+                    /*testAF.db.ref.root.child('test/-K_yg7LjGMq1hwrqgJ4g').once("value").then(function(snapshot){
+                        var objSnapshot = testAF.db.schema.build(snapshot, 'snapshot');
+                        //testAF.db.create(testAF.db.schema.build(objSnapshot, 'local'))
+                    }).catch(function(err){
+                        console.log(err);
+                    });*/
+
+
+
                 }]
             })
     }]);

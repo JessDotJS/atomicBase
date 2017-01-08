@@ -1,32 +1,35 @@
 /**
  * Created by Computadora on 05-Jan-17.
  */
+'use strict';
+
 var RefRegistrator = function(refsObject){
     if(firebase != undefined && firebase != null){
-        this.root = refsObject.root || firebase.database().ref(); // firebase.initializeApp(config) Required & Mutable
-        this.primary = refsObject.primary; // Required
-        if(refsObject.secondary != undefined && refsObject.secondary != null){
-            this.secondary = this.initSecondaryRefs(refsObject.secondary);// Optional
-        }else{
-            console.log('Info: No secondary refs Found');
-        }
+        this.root = refsObject.root || firebase.database().ref();
+        this.primary = refsObject.primary;
+        this.secondary = refsObject.secondary || false;
+        this.foreign = refsObject.foreign || false;
     }else{
-        throw "firebase variable couldn't be found, make sure you initialize it at the end of index.html";
+        throw "Firebase has not been initialized, make sure you initialize it at the end of your index.html (firebase.initializeApp(config);)";
     }
 };
 
 
-RefRegistrator.prototype.initSecondaryRefs = function(refs){
-    var secondary = {};
-    for (var key in refs) {
-        // skip loop if the property is from prototype
-        if (!refs.hasOwnProperty(key)) continue;
-        var obj = refs[key];
-        for (var property in obj) {
-            // skip loop if the property is from prototype
-            if(!obj.hasOwnProperty(property)) continue;
-            secondary[key] = obj[property];
-        }
-    }
-    return secondary;
+RefRegistrator.prototype.getSecondaryRefs = function(afObject){
+    var self = this;
+    return new Promise(function(resolve, reject){
+        self.secondary(afObject).then(function(secondaryRefs){
+            resolve(secondaryRefs);
+        }).catch(function(err){reject(err)});
+    });
+};
+
+
+RefRegistrator.prototype.getForeignRefs = function(afObject){
+    var self = this;
+    return new Promise(function(resolve, reject){
+        self.foreign(afObject).then(function(foreignRefs){
+            resolve(foreignRefs);
+        }).catch(function(err){reject(err)});
+    });
 };

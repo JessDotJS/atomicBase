@@ -2,41 +2,105 @@
  * Created by Computadora on 04-Jan-17.
  */
 
+'use strict';
+
+
+
 var Schema = function(schema){
     if(schema != undefined && schema != null){
-        this.schema = schema;
+        for (var key in schema) {
+            if (!schema.hasOwnProperty(key)) continue;
+            this[key] = schema[key];
+        }
     }else{
-        throw "schemaObject couldn't be found, AF Schema Builder couldn't initialize";
+        throw "There was an error in your schema object. AF Schema couldn't initialize.";
     }
+};
+
+/*
+* Object Builder
+* */
+Schema.prototype.build = function(data, type){
+    var self = this;
+    var defaultProperties = {};
+    var properties = data;
+    switch(type){
+        case 'snapshot':
+            defaultProperties = self.snapshotDefaults(data);
+            properties = properties.val();
+            break;
+        case 'local':
+            defaultProperties = self.localDefaults(data);
+            break;
+        case 'foreigner':
+            defaultProperties = self.foreignerDefaults(data);
+            break;
+        default:
+            break;
+    }
+
+    return self.buildSchemaProperties(defaultProperties, properties);
 };
 
 /*
  * Read
  * */
 
-Schema.prototype.buildFromSnapshot = function(snapshot){
-    return this.buildSchemaProperties({
+Schema.prototype.snapshotDefaults = function(snapshot){
+    return {
         $key: snapshot.key,
         creationTS: snapshot.val().creationTS,
+        lastEventTS: snapshot.val().lastEventTS,
         latestServerTS: snapshot.val().latestServerTS,
-        $priority: snapshot.val().getPriority()
-    }, snapshot.val());
+        $priority: snapshot.getPriority() || this.getPriority(snapshot)
+    };
 };
 
-
-/*
- * Write
- * */
-Schema.prototype.buildLocal = function(data){
+Schema.prototype.localDefaults = function(data){
     var currentClientTS = new Date().getTime();
-    return this.buildSchemaProperties({
+    return {
         creationTS: data.creationTS || currentClientTS,
         lastEventTS: currentClientTS,
         latestServerTS: firebase.database.ServerValue.TIMESTAMP,
-        '.priority': data.$priority || this.getPriority()
-    }, data);
+        '.priority': data.$priority  || this.getPriority(data)
+    };
 };
 
+
+Schema.prototype.foreignerDefaults = function(data){
+    var currentClientTS = new Date().getTime();
+    return {
+        key: data.$key,
+        creationTS: data.creationTS || currentClientTS,
+        lastEventTS: currentClientTS,
+        latestServerTS: firebase.database.ServerValue.TIMESTAMP,
+        '.priority': data.$priority  || this.getPriority(data)
+    };
+};
+
+
+Schema.prototype.getPriority = function(data){
+    var self = this;
+    var valueHandler = new ValueHandler();
+    var priority = null;
+    var currentClientTS = new Date().getTime();
+    if(typeof self.priority == 'string'){
+        switch(self.priority){
+            case 'asc':
+                priority = currentClientTS;
+                break;
+            case 'desc':
+                priority = -(currentClientTS);
+                break;
+            default:
+                priority = valueHandler.getValue(self.priority, data);
+                break;
+        }
+    }else{
+        priority = valueHandler.getValue(self.priority, data);
+    }
+    return priority;
+};
 
 
 /*
@@ -44,12 +108,14 @@ Schema.prototype.buildLocal = function(data){
  * */
 Schema.prototype.buildSchemaProperties = function(defaults, data){
     var dataObject = defaults;
-    for (var key in this.schema) {
-        if (!this.schema.hasOwnProperty(key)) continue;
-        dataObject[key] = this.getPropertyValue({
-            key: key,
-            value: data[key]
-        }, data);
+    for (var key in this) {
+        if (!this.hasOwnProperty(key)) continue;
+        if(key != 'priority'){
+            dataObject[key] = this.getPropertyValue({
+                key: key,
+                value: data[key]
+            }, data);
+        }
     }
     return dataObject;
 };
@@ -58,52 +124,20 @@ Schema.prototype.buildSchemaProperties = function(defaults, data){
 /*
  * Getters
  * */
-
-Schema.prototype.getPriority = function(){
-    var priority = null;
-    switch(typeof this.schema.priority){
-        case 'string' || 'number':
-            priority = this.schema.priority;
-            break;
-        case 'function':
-            priority = this.schema.priority();
-            break;
-        default:
-            break;
-    }
-    return priority;
-};
-
 Schema.prototype.getPropertyValue = function(propertyObject, propertiesData){
-    var propertyValue = null;
-    switch(typeof this.schema[propertyObject.key].value){
-        case 'string' || 'number' || 'boolean' || 'object':
-            if(this.schema[propertyObject.key].value == '='){
-                console.log(this.getPropertyDefaultValue(propertyObject, propertiesData));
-                propertyValue = propertyObject.value || this.getPropertyDefaultValue(propertyObject, propertiesData)
-            }
-            break;
-        case 'function':
-            propertyValue = this.schema[propertyObject.key].value(propertiesData) ||
-                this.getPropertyDefaultValue(propertyObject, propertiesData);
-            break;
-        default:
-            break;
-    }
-    return propertyValue;
-};
+    var self = this;
+    var valueHandler = new ValueHandler();
+    var dataValue;
 
-Schema.prototype.getPropertyDefaultValue = function(propertyObject, propertiesData){
-    var defaultValue = null;
-    switch(typeof this.schema[propertyObject.key].default){
-        case 'string' || 'number' || 'boolean' || 'object':
-            defaultValue = this.schema[propertyObject.key].default || null;
-            break;
-        case 'function':
-            defaultValue = this.schema[propertyObject.key].default(propertiesData) || null;
-            break;
-        default:
-            break;
+    if(self[propertyObject.key].value == '='){
+        dataValue =
+            valueHandler.getValue(propertyObject.value, propertiesData) ||
+            valueHandler.getValue(self[propertyObject.key].default, propertiesData);
+    }else{
+        dataValue =
+            valueHandler.getValue(self[propertyObject.key].value, propertiesData) ||
+            valueHandler.getValue(self[propertyObject.key].default, propertiesData);
     }
-    return defaultValue;
+
+    return dataValue;
 };

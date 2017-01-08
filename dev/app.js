@@ -41,18 +41,6 @@ afSchema.config(['$stateProvider', '$urlRouterProvider',
                     });
 
 
-
-
-
-                    /*testAF.db.ref.root.child('test/-K_yg7LjGMq1hwrqgJ4g').once("value").then(function(snapshot){
-                        var objSnapshot = testAF.db.schema.build(snapshot, 'snapshot');
-                        //testAF.db.create(testAF.db.schema.build(objSnapshot, 'local'))
-                    }).catch(function(err){
-                        console.log(err);
-                    });*/
-
-
-
                 }]
             })
     }]);

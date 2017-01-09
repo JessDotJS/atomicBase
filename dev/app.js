@@ -23,7 +23,47 @@ afSchema.config(['$stateProvider', '$urlRouterProvider',
                     var testAF = new TestAF();
 
 
-                    testAF.db.query.create({
+
+
+                    $scope.$afArray = new $afArray(testAF.db.ref, testAF.db.schema);
+
+
+
+                    $scope.$afArray.$on().then(function(instanceID){
+                        $scope.instanceID = instanceID;
+                        document.addEventListener($scope.instanceID + '-initialLotLoaded', doSomething, false);
+                    });
+
+                    function doSomething(){
+                        console.log($scope.$afArray.get.items());
+                    }
+
+
+
+                    /*function doSomething(){
+                        $scope.items = $scope.$afArray.get.items();
+                        console.log($scope.$afArray.get.items());
+                    };
+
+                    $scope.$watch('$afArray.get.items()', function(newValue, oldValue) {
+                        if(newValue != undefined){
+                            $scope.items = newValue;
+                            console.log(newValue);
+                        }
+                    }, true);*/
+
+                    /*$scope.$watch('testAF.db.$afArray.displayedItems', function(newValue, oldValue) {
+                        if(newValue != undefined){
+                            console.log(newValue);
+                        }
+                    }, true);*/
+
+
+                    /*
+                    * CRUD TESTS
+                    * */
+
+                    /*testAF.db.query.create({
                         name: 'Jess M Graterol ',
                         smallNumber: 8,
                         shortDescription: 'This is the short description'
@@ -37,8 +77,9 @@ afSchema.config(['$stateProvider', '$urlRouterProvider',
                                             console.log('Tests passed');
                                         })
                                 });
+
                             });
-                    });
+                    });*/
 
 
                 }]

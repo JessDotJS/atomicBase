@@ -46,8 +46,10 @@ Query.prototype.update = function(afObject){
 Query.prototype.remove = function(afObject){
     var self = this;
     return new Promise(function(resolve, reject){
-        self.alter(afObject, 'remove').then(function(response){
-            resolve(response);
+        self.alter(afObject, 'update').then(function(response){
+            self.alter(afObject, 'remove').then(function(response){
+                resolve(response);
+            }).catch(function(err){reject(err)});
         }).catch(function(err){reject(err)});
     });
 };

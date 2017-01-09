@@ -42,13 +42,7 @@ var TestAF = function(){
         schema: {
             name: {
                 value: '=',
-                default: 'No name was provided', // When property's value is undefined - Default = null
-                rules: { //@TODO Firebase rules generator
-                    read: true,
-                    write: true,
-                    validate: false,
-                    index: false
-                }
+                default: 'No name was provided' // When property's value is undefined - Default = null
             },
             smallNumber: {
                 value: '=',

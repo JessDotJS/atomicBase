@@ -6,7 +6,7 @@
 </ul>
 
 <md-button ng-disabled="$afArray.fetching"
-        ng-click="loadMore()">
+        ng-click="$afArray.loadNextLot()">
     <p ng-hide="$afArray.fetching">Load Next Lot</p>
     <p ng-show="$afArray.fetching">Fetching</p>
 </md-button>

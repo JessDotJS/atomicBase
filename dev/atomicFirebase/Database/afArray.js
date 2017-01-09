@@ -69,13 +69,7 @@ $afArray.prototype.loadInitialLot = function(){
                         self.id = serverTS;
                         self.initialLotLoaded = true;
                         self.subscribe();
-
-                        console.log('Initial Lot Loaded');
-                        console.log(self.items);
-
-
                         self.dispatchEvent();
-
                         resolve(self.id);
                     }).catch(function(err){reject(err)});
                 }).catch(function(err){reject(err)});
@@ -122,24 +116,6 @@ $afArray.prototype.dispatchEvent = function(){
     var self = this;
     self.items.sort(self.sortItems());
     document.dispatchEvent( new CustomEvent('list_changed'));
-};
-
-$afArray.prototype.sortItems = function(){
-    var self = this;
-    if(typeof self.listSort == 'string'){
-        return self.itemSort[self.listSort];
-    }else if(typeof self.listSort == 'function'){
-        return self.listSort
-    }
-};
-
-$afArray.prototype.itemSort = {
-    desc: function(a, b){
-        return parseFloat(a.$priority) - parseFloat(b.$priority);
-    },
-    asc: function(a, b){
-        return parseFloat(a.$priority) + parseFloat(b.$priority);
-    }
 };
 
 /*
@@ -256,4 +232,27 @@ $afArray.prototype.itemExists = function(snapshot){
         }
     }
     return exists;
+};
+
+
+/*
+* Sorting Functionality
+* */
+
+$afArray.prototype.sortItems = function(){
+    var self = this;
+    if(typeof self.listSort == 'string'){
+        return self.builtInSort[self.listSort];
+    }else if(typeof self.listSort == 'function'){
+        return self.listSort
+    }
+};
+
+$afArray.prototype.builtInSort = {
+    desc: function(a, b){
+        return parseFloat(a.$priority) - parseFloat(b.$priority);
+    },
+    asc: function(a, b){
+        return parseFloat(a.$priority) + parseFloat(b.$priority);
+    }
 };

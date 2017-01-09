@@ -26,21 +26,13 @@ afSchema.config(['$stateProvider', '$urlRouterProvider',
                     $scope.$afArray = testAF.db.$afArray;
 
 
-                    $scope.$afArray.$on().then(function(instanceID){
+                    $scope.$afArray.$on();
 
-                    }).catch(function(err){
-                        console.log(err);
-                    });
-
-                    $scope.loadMore = function(){
-                        $scope.$afArray.loadNextLot().then(function(){
-
-                        }).catch(function(err){
-                            console.log(err);
-                        });
-                    };
 
                     document.addEventListener('list_changed', function (e) {
+                        /*
+                        * Fixes unresolved display issues
+                        * */
                         $timeout(function(){});
                     }, false);
 
@@ -72,13 +64,13 @@ afSchema.config(['$stateProvider', '$urlRouterProvider',
                     }).then(function(snapshotKey){
                         testAF.db.ref.root.child('test' + '/' + snapshotKey).once("value")
                             .then(function(snapshot){
-                                /*testAF.db.query.update(testAF.db.schema.build(snapshot, 'snapshot'))
+                                testAF.db.query.update(testAF.db.schema.build(snapshot, 'snapshot'))
                                  .then(function(){
                                  testAF.db.query.remove(testAF.db.schema.build(snapshot, 'snapshot'))
                                  .then(function(){
                                  console.log('Tests passed');
                                  })
-                                 });*/
+                                 });
 
                             });
                     });

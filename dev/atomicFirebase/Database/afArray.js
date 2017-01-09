@@ -73,6 +73,8 @@ $afArray.prototype.loadInitialLot = function(){
                         self.id = serverTS;
                         self.initialLotLoaded = true;
                         self.subscribe();
+
+
                         document.dispatchEvent(new Event(self.id + '-initialLotLoaded'));
                         resolve(self.id);
                     }).catch(function(err){reject(err)});

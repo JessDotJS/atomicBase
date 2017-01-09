@@ -27,7 +27,7 @@ var Database = function(databaseObject){
     /*
      * $afArray Related
      * */
-    //this.$afArray = new $afArray(this.ref, this.schema);
+    this.$afArray = new $afArray(this.ref, this.schema);
 
 
     /*

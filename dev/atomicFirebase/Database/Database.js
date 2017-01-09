@@ -25,14 +25,17 @@ var Database = function(databaseObject){
 
 
     /*
-     * $afArray Related
+     * Server Related
      * */
-    this.$afArray = new $afArray(this.ref, this.schema);
+    this.server = new Server(this.ref);
 
 
     /*
-    * Server Related
-    * */
-    this.server = new Server(this.ref);
+     * $afArray Related
+     * */
+    this.$afArray = new $afArray(this.ref, this.schema, this.server);
+
+
+
 };
 

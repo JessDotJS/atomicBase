@@ -3,10 +3,10 @@
  */
 'use strict';
 
-var $afArray = function(ref, schema){
+var $afArray = function(ref, schema, server){
     this.ref = ref;
     this.schema = schema;
-    this.server = new Server(ref);
+    this.server = server;
 };
 
 
@@ -21,12 +21,14 @@ $afArray.prototype.$on = function(afArrayObject){
             initialLotSize: afArrayObject.initialLotSize || 10,
             nextLotSize: afArrayObject.nextLotSize || 12
         };
+        self.listSort = afArrayObject.listSort || 'desc';
     }else{
         self.arrayRef = self.ref.primary;
         self.query = {
             initialLotSize: 10,
             nextLotSize: 12
         };
+        self.listSort = 'desc';
     }
 
     self.eventListenerRef = null;
@@ -36,12 +38,6 @@ $afArray.prototype.$on = function(afArrayObject){
     self.itemsRemaining = true;
     self.fetching = false;
     self.items = [];
-
-    self.get = {
-        items: function(){
-            return self.items;
-        }
-    };
 
     return new Promise(function(resolve, reject){
         self.loadInitialLot().then(function(instanceID){
@@ -74,8 +70,12 @@ $afArray.prototype.loadInitialLot = function(){
                         self.initialLotLoaded = true;
                         self.subscribe();
 
+                        console.log('Initial Lot Loaded');
+                        console.log(self.items);
 
-                        document.dispatchEvent(new Event(self.id + '-initialLotLoaded'));
+
+                        self.dispatchEvent();
+
                         resolve(self.id);
                     }).catch(function(err){reject(err)});
                 }).catch(function(err){reject(err)});
@@ -100,20 +100,47 @@ $afArray.prototype.loadNextLot = function(){
                 if(previousArrayLength == self.items.length){
                     self.itemsRemaining = false;
                 }
-                setTimeout(function(){
-                    self.fetching = false;
-                    resolve(true);
-                }, 5000);
+                self.dispatchEvent();
+                self.fetching = false;
+                resolve(true);
             }).catch(function(err){
                 reject(err);
             });
         }else{
-            setTimeout(function(){  resolve(false) }, 2000);
+            setTimeout(function(){  resolve(false) }, 4000);
         }
     });
 
 };
 
+
+/*
+* $afArray Event Dispatcher
+* */
+
+$afArray.prototype.dispatchEvent = function(){
+    var self = this;
+    self.items.sort(self.sortItems());
+    document.dispatchEvent( new CustomEvent('list_changed'));
+};
+
+$afArray.prototype.sortItems = function(){
+    var self = this;
+    if(typeof self.listSort == 'string'){
+        return self.itemSort[self.listSort];
+    }else if(typeof self.listSort == 'function'){
+        return self.listSort
+    }
+};
+
+$afArray.prototype.itemSort = {
+    desc: function(a, b){
+        return parseFloat(a.$priority) - parseFloat(b.$priority);
+    },
+    asc: function(a, b){
+        return parseFloat(a.$priority) + parseFloat(b.$priority);
+    }
+};
 
 /*
  * Event Listeners Subscriber
@@ -126,21 +153,25 @@ $afArray.prototype.subscribe = function(){
     self.eventListenerRef.on('child_added', function(snapshot) {
         console.log('child_added');
         self.addItem(snapshot, true);
+        self.dispatchEvent();
     });
 
     self.eventListenerRef.on('child_changed', function(snapshot) {
         console.log('child_changed');
         self.editItem(snapshot);
+        self.dispatchEvent();
     });
 
     self.eventListenerRef.on('child_moved', function(snapshot) {
         console.log('child_moved');
         self.editItem(snapshot);
+        self.dispatchEvent();
     });
 
     self.eventListenerRef.on('child_removed', function(snapshot) {
         console.log('child_removed');
         self.removeItem(snapshot);
+        self.dispatchEvent();
     });
     console.log('Instance: ' + self.id + ' subscribed.');
 };
@@ -150,7 +181,7 @@ $afArray.prototype.subscribe = function(){
  * Deactivators
  * */
 
-$afArray.prototype.deactivate = function(){
+$afArray.prototype.$off = function(){
     this.unsubscribe();
     this.resetDefaults();
 };
@@ -170,6 +201,7 @@ $afArray.prototype.unsubscribe = function(){
 $afArray.prototype.resetDefaults = function(){
     this.arrayRef = null;
     this.query = null;
+    self.listSort = null;
     this.eventListenerRef = null;
     this.displayedItems = 0;
     this.subscribed = false;

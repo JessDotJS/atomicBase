@@ -1,6 +1,12 @@
-<h1>Testing</h1>
+<h1>Displayed Items: {{$afArray.displayedItems}}</h1>
 <ul>
-    <li ng-repeat="item in items">
+    <li ng-repeat="item in $afArray.items">
         <p>{{item.name}}</p>
     </li>
 </ul>
+
+<md-button ng-disabled="$afArray.fetching"
+        ng-click="loadMore()">
+    <p ng-hide="$afArray.fetching">Load Next Lot</p>
+    <p ng-show="$afArray.fetching">Fetching</p>
+</md-button>

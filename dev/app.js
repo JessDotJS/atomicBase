@@ -23,27 +23,31 @@ afSchema.config(['$stateProvider', '$urlRouterProvider',
                     var testAF = new TestAF();
 
 
-
-
                     $scope.$afArray = testAF.db.$afArray;
 
 
-
                     $scope.$afArray.$on().then(function(instanceID){
-                        $scope.instanceID = instanceID;
-                        $scope.items = $scope.$afArray.items;
+
+                    }).catch(function(err){
+                        console.log(err);
                     });
 
+                    $scope.loadMore = function(){
+                        $scope.$afArray.loadNextLot().then(function(){
+
+                        }).catch(function(err){
+                            console.log(err);
+                        });
+                    };
+
+                    document.addEventListener('list_changed', function (e) {
+                        $timeout(function(){});
+                    }, false);
 
 
-                    $scope.$watch('items', function(newValue, oldValue) {
-                        if(newValue != undefined){
-                            $timeout(function(){
-
-                                console.log($scope.items);
-                            });
-                        }
-                    }, true);
+                    $rootScope.$on("$stateChangeSuccess",function() {
+                        $scope.$afArray.$off();
+                    });
 
 
                 }]

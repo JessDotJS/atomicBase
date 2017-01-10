@@ -1,0 +1,78 @@
+<md-dialog aria-label="Tasks" flex="50">
+    <form name="taskForm" ng-submit="save()">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Task</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon aria-label="close" class="material-icons step">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <div ng-show="submitting"><md-progress-linear md-mode="indeterminate"></md-progress-linear></div>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout="column">
+                    <md-input-container class="md-block md-padding" flex>
+                        <input ng-model="selectedItem.name" name="name" type="text" placeholder="Name"
+                               ng-required="true" md-autofocus>
+                        <div ng-messages="taskForm.name.$error">
+                            <div ng-message="required">Enter the name of the task.</div>
+                        </div>
+                    </md-input-container>
+
+                    <md-input-container class="md-block md-padding">
+                        <label>Description</label>
+                        <textarea
+                                ng-model="selectedItem.description"
+                                name="description"
+                                md-maxlength="300"
+                                ng-required="true"
+                                md-select-on-focus></textarea>
+                        <div ng-messages="taskForm.description.$error">
+                            <div ng-message="required">Enter the description.</div>
+                        </div>
+                    </md-input-container>
+
+
+                    <!--<div class="md-padding align-center">
+                        <div ng-show="!taskSelected || updateFile == true">
+                            <h3 class="headline">Imagen</h3>
+                            <lf-ng-md-file-input
+                                    name="files"
+                                    lf-files="files"
+                                    lf-maxcount="5"
+                                    lf-filesize="10MB"
+                                    lf-totalsize="20MB"
+                                    lf-mimetype="image/*"
+                                    lf-drag-and-drop-label="Imagen">
+                            </lf-ng-md-file-input>
+                            <div ng-messages="taskForm.files.$error" style="color:red;">
+                                <div ng-message="maxcount">Too many files.</div>
+                                <div ng-message="filesize">File size too large.</div>
+                                <div ng-message="totalsize">Total size too large.</div>
+                                <div ng-message="mimetype">Mimetype error.</div>
+                            </div>
+                            <md-button class="md-warn" ng-click="cancelFileChange()" ng-show="taskSelected">Cancelar Cambio de Imagen</md-button>
+                        </div>
+
+                        <div ng-if="taskSelected && updateFile == false" class="align-center">
+                            <a ng-click="changeFile()">
+                                <img ng-src="{{selectedItem.fileUrl}}" class="md-card-image" alt="Logo">
+                            </a>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button class="md-warn" ng-disabled="submitting" ng-click="cancel()">Cancel</md-button>
+            <span flex></span>
+            <md-button type="submit" class="md-primary" ng-disabled="taskForm.$invalid || submitting">
+                <span ng-hide="submitting">Save</span>
+                <span ng-show="submitting">Processing...</span>
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

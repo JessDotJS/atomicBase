@@ -2,91 +2,76 @@
  * Module Init
  * */
 
-var afSchema = angular.module('afSchema', ['ngAnimate', 'ngMaterial', 'ui.router']);
+var af = angular.module('afSchema', ['ngAnimate', 'ngMaterial', 'ui.router', 'angularAnimation']);
 
 
 
 /*
  * Routes Config
  * */
-afSchema.config(['$stateProvider', '$urlRouterProvider',
+af.config(['$stateProvider', '$urlRouterProvider',
     function($stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.otherwise("/main");
+        $urlRouterProvider.otherwise("/app");
 
         $stateProvider
-            .state('read', {
-                url: '/read',
-                templateUrl: 'tests/tests.html',
-                controller: ['$scope', '$rootScope', '$timeout', function($scope, $rootScope, $timeout){
-
-
-                    var testAF = new TestAF();
-
-
-                    $scope.$afArray = testAF.db.$afArray;
-
-
-                    $scope.$afArray.$on();
-
-
-                    document.addEventListener('list_changed', function (e) {
-                        /*
-                        * Fixes unresolved display issues
-                        * */
-                        $timeout(function(){});
-                    }, false);
-
-
-                    $rootScope.$on("$stateChangeSuccess",function() {
-                        $scope.$afArray.$off();
-                    });
-
-
-                }]
+            .state('app', {
+                url: '/app',
+                template: '<app></app>'
             })
 
-            .state('write', {
-                url: '/write',
-                controller: ['$scope', '$rootScope', '$timeout', function($scope, $rootScope, $timeout){
 
 
-                    var testAF = new TestAF();
-
-
-                    /*
-                     * CRUD TESTS
-                     * */
-
-                    testAF.db.query.create({
-                        name: 'Jess M Graterol ',
-                        smallNumber: 8,
-                        shortDescription: 'This is the short description'
-                    }).then(function(snapshotKey){
-                        testAF.db.ref.root.child('test' + '/' + snapshotKey).once("value")
-                            .then(function(snapshot){
-                                testAF.db.query.update(testAF.db.schema.build(snapshot, 'snapshot'))
-                                 .then(function(){
-                                 testAF.db.query.remove(testAF.db.schema.build(snapshot, 'snapshot'))
-                                 .then(function(){
-                                 console.log('Tests passed');
-                                 })
-                                 });
-
-                            });
-                    });
-
-
-                }]
+            .state('afClass', {
+                url: '/afClass',
+                template: '<af-class></af-class>'
             })
+
+            .state('afArray', {
+                url: '/afArray',
+                template: '<af-array></af-array>'
+            })
+
+            .state('afObject', {
+                url: '/afObject',
+                template: '<af-object></af-object>'
+            })
+
+            .state('afOrder', {
+                url: '/afOrder',
+                template: '<af-order></af-order>'
+            })
+
+
+            .state('storage', {
+                url: '/storage',
+                abstract: true,
+                template: '<ui-view></ui-view>'
+            })
+
+
+
     }]);
 
 /*
  * Run Config
  * */
-afSchema.run(['$rootScope', '$timeout',
-    function($rootScope, $timeout) {
+af.run(['$rootScope', '$timeout', '$mdSidenav',
+    function($rootScope, $timeout, $mdSidenav) {
+        $rootScope.toggleSideNav = function(){
+            if($mdSidenav('right').isOpen()){
+                $mdSidenav('right').close();
+            }else{
+                $mdSidenav('right').open();
+            }
+        }
 
 
+        $rootScope.$on("$stateChangeSuccess",
+            function (event, toState, toParams, fromState, fromParams) {
+                if($mdSidenav('right').isOpen()){
+                    $mdSidenav('right').close();
+                }
+            });
     }]);
 
 
@@ -94,7 +79,7 @@ afSchema.run(['$rootScope', '$timeout',
 /*
  * Theme Config
  * */
-afSchema.config(['$mdThemingProvider', function($mdThemingProvider){
+af.config(['$mdThemingProvider', function($mdThemingProvider){
     $mdThemingProvider.theme('default')
         .primaryPalette("deep-purple", {
             'default': '500',
@@ -108,7 +93,7 @@ afSchema.config(['$mdThemingProvider', function($mdThemingProvider){
             'hue-2': '600',
             'hue-3': '700'
         })
-        .warnPalette('deep-orange', {
+        .warnPalette('red', {
             'default': '400',
             'hue-1': '500',
             'hue-2': '600',
@@ -127,45 +112,27 @@ afSchema.config(['$mdThemingProvider', function($mdThemingProvider){
             'hue-2': '600',
             'hue-3': '700'
         })
-        .warnPalette('deep-orange', {
+        .warnPalette('red', {
             'default': '400',
             'hue-1': '500',
             'hue-2': '600',
             'hue-3': '700'
         });
-    $mdThemingProvider.theme('deep-purple')
-        .primaryPalette("deep-purple", {
+
+    $mdThemingProvider.theme('red')
+        .primaryPalette("red", {
             'default': '500',
             'hue-1': '600',
             'hue-2': '700',
             'hue-3': '800'
         })
-        .accentPalette('deep-purple', {
+        .accentPalette('red', {
             'default': '400',
             'hue-1': '500',
             'hue-2': '600',
             'hue-3': '700'
         })
-        .warnPalette('deep-orange', {
-            'default': '400',
-            'hue-1': '500',
-            'hue-2': '600',
-            'hue-3': '700'
-        });
-    $mdThemingProvider.theme('deep-orange')
-        .primaryPalette("deep-orange", {
-            'default': '500',
-            'hue-1': '600',
-            'hue-2': '700',
-            'hue-3': '800'
-        })
-        .accentPalette('deep-orange', {
-            'default': '400',
-            'hue-1': '500',
-            'hue-2': '600',
-            'hue-3': '700'
-        })
-        .warnPalette('deep-orange', {
+        .warnPalette('red', {
             'default': '400',
             'hue-1': '500',
             'hue-2': '600',

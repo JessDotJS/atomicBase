@@ -66,7 +66,7 @@ $afArray.prototype.loadInitialLot = function(){
                             self.addItem(item, false);
                         });
                         self.eventListenerRef = self.ref.root.child(self.arrayRef).orderByChild('latestServerTS').startAt(serverTS);
-                        self.id = serverTS;
+                        self.id = self.generateInstanceID();
                         self.initialLotLoaded = true;
                         self.subscribe();
                         self.dispatchEvent();
@@ -255,4 +255,25 @@ $afArray.prototype.builtInSort = {
     asc: function(a, b){
         return parseFloat(a.$priority) + parseFloat(b.$priority);
     }
+};
+
+/*
+* ID Generation
+* */
+
+$afArray.prototype.generateInstanceID = function(){
+    return this.generateRandomNumbers() +
+        this.generateRandomNumbers() + '-' +
+        this.generateRandomNumbers() + '-' +
+        this.generateRandomNumbers() + '-' +
+        this.generateRandomNumbers() + '-' +
+        this.generateRandomNumbers() + '-' +
+        this.generateRandomNumbers() + '-' +
+        this.generateRandomNumbers();
+};
+
+$afArray.prototype.generateRandomNumbers = function(){
+    return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
 };

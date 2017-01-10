@@ -102,6 +102,10 @@ Query.prototype.alter = function(afObject, type){
                     resolve(response);
                 }).catch(function(err){reject(err)});
             }).catch(function(err){reject(err)});
+        }else{
+            self.processFanoutObject(fanoutObject).then(function(response){
+                resolve(response);
+            }).catch(function(err){reject(err)});
         }
     });
 };

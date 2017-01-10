@@ -47,35 +47,49 @@ Schema.prototype.build = function(data, type){
  * */
 
 Schema.prototype.snapshotDefaults = function(snapshot){
-    return {
-        $key: snapshot.key,
-        creationTS: snapshot.val().creationTS,
-        lastEventTS: snapshot.val().lastEventTS,
-        latestServerTS: snapshot.val().latestServerTS,
-        $priority: snapshot.getPriority() || this.getPriority(snapshot)
-    };
+    if(snapshot){
+        return {
+            $key: snapshot.key,
+            creationTS: snapshot.val().creationTS,
+            lastEventTS: snapshot.val().lastEventTS,
+            latestServerTS: snapshot.val().latestServerTS,
+            $priority: snapshot.getPriority() || this.getPriority(snapshot)
+        };
+    }else{
+        return {};
+    }
 };
 
 Schema.prototype.localDefaults = function(data){
-    var currentClientTS = new Date().getTime();
-    return {
-        creationTS: data.creationTS || currentClientTS,
-        lastEventTS: currentClientTS,
-        latestServerTS: firebase.database.ServerValue.TIMESTAMP,
-        '.priority': data.$priority  || this.getPriority(data)
-    };
+    if(data){
+        var currentClientTS = new Date().getTime();
+        return {
+            creationTS: data.creationTS || currentClientTS,
+            lastEventTS: currentClientTS,
+            latestServerTS: firebase.database.ServerValue.TIMESTAMP,
+            '.priority': data.$priority  || this.getPriority(data)
+        };
+    }else{
+        return {};
+    }
+
 };
 
 
 Schema.prototype.foreignerDefaults = function(data){
-    var currentClientTS = new Date().getTime();
-    return {
-        key: data.$key,
-        creationTS: data.creationTS || currentClientTS,
-        lastEventTS: currentClientTS,
-        latestServerTS: firebase.database.ServerValue.TIMESTAMP,
-        '.priority': data.$priority  || this.getPriority(data)
-    };
+    if(data){
+        var currentClientTS = new Date().getTime();
+        return {
+            key: data.$key,
+            creationTS: data.creationTS || currentClientTS,
+            lastEventTS: currentClientTS,
+            latestServerTS: firebase.database.ServerValue.TIMESTAMP,
+            '.priority': data.$priority  || this.getPriority(data)
+        };
+    }else{
+        return {};
+    }
+
 };
 
 

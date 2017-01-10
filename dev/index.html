@@ -4,14 +4,90 @@
     <meta charset="UTF-8">
     <title>Atomic Firebase</title>
 
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="vendors/bower_components/angular-material/angular-material.min.css">
+    <link rel="stylesheet" href="vendors/bower_components/animate.css/animate.min.css">
+    <link rel="stylesheet" href="vendors/bower_components/angularAnimation/dist/angularAnimation.css">
 </head>
-<body>
+<body style="overflow-y: hidden">
 
+<div layout="column" layout-fill ng-cloack>
+    <div layout="row" flex>
+        <md-sidenav class="md-sidenav-right"
+                    md-whiteframe="7"
+                    md-component-id="right"
+                    flex>
+            <md-content>
+                <div layout="column">
+                    <md-subheader class="md-no-sticky">TESTING</md-subheader>
+                    <md-list flex style="padding:0px;">
+                        <md-list-item ui-sref="app">
+                            <p>Mock App</p>
+                        </md-list-item>
+                    </md-list>
 
-<div ui-view></div>
+                    <md-subheader class="md-no-sticky">AF.DATABASE</md-subheader>
 
+                    <md-list flex style="padding:0px;">
+                        <md-list-item ui-sref="afClass">
+                            <p>AF Database Class</p>
+                        </md-list-item>
+                    </md-list>
+
+                    <md-list flex style="padding:0px;">
+                        <md-list-item ui-sref="afArray">
+                            <p>$afArray</p>
+                        </md-list-item>
+                    </md-list>
+
+                    <md-list flex  style="padding:0px;">
+                        <md-list-item ui-sref="afObject">
+                            <p>$afObject</p>
+                        </md-list-item>
+                    </md-list>
+
+                    <md-list flex style="padding:0px;">
+                        <md-list-item ui-sref="afOrder">
+                            <p>$afOrder</p>
+                        </md-list-item>
+                    </md-list>
+
+                    <md-subheader class="md-no-sticky">AF.STORAGE</md-subheader>
+
+                    <md-list flex style="padding:0px;">
+                        <md-list-item ui-sref="afStorage">
+                            <p>$afStorage</p>
+                        </md-list-item>
+                    </md-list>
+                </div>
+            </md-content>
+        </md-sidenav>
+
+        <div layout="column" flex>
+            <md-toolbar class="md-hue-3"
+                        md-whiteframe="10"
+                        style="margin:0px;">
+                <div class="md-toolbar-tools">
+                    <h2 style="margin-left:5px;">
+                        <span>Atomic Firebase Tests</span>
+                    </h2>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="$root.toggleSideNav()">
+                        <md-icon aria-label="menu" class="material-icons step">menu</md-icon>
+                    </md-button>
+                </div>
+            </md-toolbar>
+            <div class="md-padding" style="overflow-y: scroll" flex>
+                <div animation="'auto'"
+                     in="'zoomInUp'"
+                     out="'zoomOutDown'"
+                     ui-view></div>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 
 <!-- Angular -->
@@ -22,6 +98,7 @@
 <script src="vendors/bower_components/angular-animate/angular-animate.min.js"></script>
 <script src="vendors/bower_components/angular-aria/angular-aria.min.js"></script>
 
+<script src="vendors/bower_components/angularAnimation/dist/angularAnimation.js"></script>
 
 <!-- Firebase -->
 <script src="vendors/bower_components/firebase/firebase.js"></script>
@@ -50,8 +127,28 @@
 
 
 
-<!-- AF Test Object -->
-<script src="tests/TestAF.js"></script>
+<!-- Modules -->
+<script src="components/modules/Task.Class.js"></script>
+<script src="components/modules/User.Class.js"></script>
+<script src="components/modules/Group.Class.js"></script>
+
+<!-- App Components -->
+<script src="components/app/app.js"></script>
+<script src="components/app/tasks/tasks.js"></script>
+<script src="components/app/users/users.js"></script>
+<script src="components/app/groups/groups.js"></script>
+
+<!-- Testing Components -->
+<script src="components/database/afClass/afClass.js"></script>
+
+<script src="components/database/crudOperations/crudOperations.js"></script>
+
+<script src="components/database/afArray/afArray.js"></script>
+
+<script src="components/database/afObject/afObject.js"></script>
+
+<script src="components/database/afOrder/afOrder.js"></script>
+
 
 
 

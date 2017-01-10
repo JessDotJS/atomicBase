@@ -26,6 +26,10 @@
     "angular": "1.6.1",
     "firebase": "^3.6.4",
     "angular-material": "^1.1.1",
-    "angular-ui-router": "latest"
+    "angular-ui-router": "latest",
+    "angularAnimation": "*"
+  },
+  "resolutions": {
+    "angular": "1.6.1"
   }
 }

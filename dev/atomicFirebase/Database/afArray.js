@@ -127,29 +127,28 @@ $afArray.prototype.subscribe = function(){
     var self = this;
     self.subscribed = true;
     self.eventListenerRef.on('child_added', function(snapshot) {
-        console.log('child_added');
+        //console.log('child_added');
         self.addItem(snapshot, true);
         self.dispatchEvent();
     });
 
     self.eventListenerRef.on('child_changed', function(snapshot) {
-        console.log('child_changed');
+        //console.log('child_changed');
         self.editItem(snapshot);
         self.dispatchEvent();
     });
 
     self.eventListenerRef.on('child_moved', function(snapshot) {
-        console.log('child_moved');
+        //console.log('child_moved');
         self.editItem(snapshot);
         self.dispatchEvent();
     });
 
     self.eventListenerRef.on('child_removed', function(snapshot) {
-        console.log('child_removed');
+        //console.log('child_removed');
         self.removeItem(snapshot);
         self.dispatchEvent();
     });
-    console.log('Instance: ' + self.id + ' subscribed.');
 };
 
 
@@ -170,7 +169,6 @@ $afArray.prototype.unsubscribe = function(){
         self.eventListenerRef.off('child_moved');
         self.eventListenerRef.off('child_removed');
         self.subscribed = false;
-        console.log('Instance: ' + this.id + ' unsubscribed.');
     }
 };
 

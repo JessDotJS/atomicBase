@@ -16,12 +16,12 @@ Query.prototype.create = function(afObject){
     var fanoutObject = {};
     var primaryRef = self.ref.root.child(self.ref.primary);
     return new Promise(function(resolve, reject){
-        primaryRef.push(self.schema.build(afObject, 'local')).then(function(snapshot){
+        primaryRef.push(self.schema.build(afObject, 'primary')).then(function(snapshot){
             afObject.$key = snapshot.key;
             if(self.ref.secondary){
                 self.ref.getSecondaryRefs(afObject).then(function(secondaryRefs){
                     for(var i = 0; i < secondaryRefs.length; i++){
-                        fanoutObject[secondaryRefs[i]] = self.schema.build(afObject, 'local')
+                        fanoutObject[secondaryRefs[i]] = self.schema.build(afObject, 'secondary')
                     }
                     self.processFanoutObject(fanoutObject).then(function(response){
                         resolve(afObject.$key);
@@ -57,15 +57,27 @@ Query.prototype.remove = function(afObject){
 Query.prototype.alter = function(afObject, type){
     var self = this;
     var fanoutObject = {};
-    var formattedObject = {};
+
+    var primary;
+    var secondary;
+    var foreign;
+
     if(type == 'update'){
-        formattedObject = self.schema.build(afObject, 'local');
+        primary = self.schema.build(afObject, 'primary');
+        secondary = self.schema.build(afObject, 'secondary');
+        foreign = self.schema.build(afObject, 'foreign');
+    }else if(type == 'remove'){
+        primary = {};
+        secondary = {};
+        foreign = {};
     }
+
+
     return new Promise(function(resolve, reject){
         /*
          * Primary Ref
          * */
-        fanoutObject[self.ref.primary + '/' + afObject.$key] = formattedObject;
+        fanoutObject[self.ref.primary + '/' + afObject.$key || afObject.key] = primary;
 
         /*
          * Secondary & Foreign
@@ -74,35 +86,49 @@ Query.prototype.alter = function(afObject, type){
             self.ref.secondary(afObject).then(function(secondaryRefs){
                 self.ref.foreign(afObject).then(function(foreignRefs){
                     for(var i = 0; i <secondaryRefs.length; i++){
-                        fanoutObject[secondaryRefs[i]] = formattedObject;
+                        fanoutObject[secondaryRefs[i]] = secondary;
                     }
                     for(var i = 0; i < foreignRefs.length; i++){
-                        fanoutObject[foreignRefs[i]] = formattedObject;
+                        fanoutObject[foreignRefs[i]] = foreign;
                     }
                     self.processFanoutObject(fanoutObject).then(function(response){
                         resolve(response);
                     }).catch(function(err){reject(err)});
                 }).catch(function(err){reject(err)});
             }).catch(function(err){reject(err)});
-        }else if(self.ref.secondary && !self.ref.foreign){
+        }
+        /*
+         * Secondary & !Foreign
+         * */
+        else if(self.ref.secondary && !self.ref.foreign){
             self.ref.secondary(afObject).then(function(secondaryRefs){
                 for(var i = 0; i <secondaryRefs.length; i++){
-                    fanoutObject[secondaryRefs[i]] = formattedObject;
+                    fanoutObject[secondaryRefs[i]] = secondary;
                 }
                 self.processFanoutObject(fanoutObject).then(function(response){
                     resolve(response);
                 }).catch(function(err){reject(err)});
             }).catch(function(err){reject(err)});
-        }else if(!self.ref.secondary && self.ref.foreign){
+        }
+
+        /*
+         * !Secondary & Foreign
+         * */
+        else if(!self.ref.secondary && self.ref.foreign){
             self.ref.foreign(afObject).then(function(foreignRefs){
                 for(var i = 0; i < foreignRefs.length; i++){
-                    fanoutObject[foreignRefs[i]] = formattedObject;
+                    fanoutObject[foreignRefs[i]] = foreign;
                 }
                 self.processFanoutObject(fanoutObject).then(function(response){
                     resolve(response);
                 }).catch(function(err){reject(err)});
             }).catch(function(err){reject(err)});
-        }else{
+        }
+
+        /*
+         * !Secondary & !Foreign
+         * */
+        else{
             self.processFanoutObject(fanoutObject).then(function(response){
                 resolve(response);
             }).catch(function(err){reject(err)});

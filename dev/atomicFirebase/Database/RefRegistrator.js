@@ -1,7 +1,12 @@
 /**
- * Created by Computadora on 05-Jan-17.
+ * Created by Computadora on 10-Jan-17.
  */
+
 'use strict';
+/*
+ * Ref Registrator
+ * */
+
 
 var RefRegistrator = function(refsObject){
     if(firebase != undefined && firebase != null){

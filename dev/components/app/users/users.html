@@ -28,6 +28,15 @@
                         <md-icon aria-label="more_vert" class="material-icons step">more_vert</md-icon>
                     </md-button>
                     <md-menu-content>
+
+                        <md-menu-item>
+                            <md-button ng-click="showAssignmentForm($event, item)">
+                                <md-icon aria-label="assignment" class="material-icons step">assignment</md-icon> Assign to Group
+                            </md-button>
+                        </md-menu-item>
+
+                        <md-menu-divider></md-menu-divider>
+
                         <md-menu-item>
                             <md-button ng-click="selectItem($event, item)">
                                 <md-icon aria-label="mode_edit" class="material-icons step">mode_edit</md-icon> Editar

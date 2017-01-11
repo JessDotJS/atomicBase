@@ -30,13 +30,29 @@ var Task = function(){
          * */
 
         schema: {
-            name: {
-                value: '='
+            primary: {
+                name: {
+                    value: '='
+                },
+                description: {
+                    value: '='
+                }
             },
-            description: {
-                value: '='
+            secondary: {
+                name: {
+                    value: '='
+                },
+                description: {
+                    value: '='
+                }
             },
-            priority: 'desc'// Default = 'asc'
+            foreign: {
+                name: {
+                    value: '='
+                }
+            },
+
+            priority: 'dateDesc'
         }
     });
 };

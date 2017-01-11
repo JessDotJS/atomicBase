@@ -1,157 +1,185 @@
-/**
- * Created by Computadora on 04-Jan-17.
- */
-
 'use strict';
 
 
+/*
+* Schema initialization
+*
+* @param - Schema Object & $afPriority
+* @returns - void
+* */
 
-var Schema = function(schema){
+var Schema = function(schema, $afPriority){
     if(schema != undefined && schema != null){
-        for (var key in schema) {
-            if (!schema.hasOwnProperty(key)) continue;
-            this[key] = schema[key];
-        }
+        var schemaUtilities = new SchemaUtilities();
+
+        this.$afPriority = $afPriority;
+
+        //Build Schema Configuration Objects
+        this.primary = schemaUtilities.retrieveConfiguration(schema.primary);
+        this.secondary = schemaUtilities.retrieveConfiguration(schema.secondary);
+        this.foreign = schemaUtilities.retrieveConfiguration(schema.foreign);
     }else{
         throw "There was an error in your schema object. AF Schema couldn't initialize.";
     }
 };
 
 /*
-* Object Builder
+* Build
+*
+ * @params
+ * data - an afObject coming from snapshot build
+ * type - available options: snapshot, primary, secondary & foreign
+ * @returns - proper formatted object with desired schema
 * */
+
 Schema.prototype.build = function(data, type){
     var self = this;
-    var defaultProperties = {};
-    var properties = data;
-    switch(type){
-        case 'snapshot':
-            defaultProperties = self.snapshotDefaults(data);
-            properties = properties.val();
-            break;
-        case 'local':
-            defaultProperties = self.localDefaults(data);
-            break;
-        case 'foreigner':
-            defaultProperties = self.foreignerDefaults(data);
-            break;
-        default:
-            break;
+    var properties;
+    if(type == 'snapshot'){
+        properties = data.val();
+    }else{
+        properties = data;
     }
-
-    return self.buildSchemaProperties(defaultProperties, properties);
+    if(self.getDefaults(data, type).then == undefined){
+        return self.buildSchemaProperties(self.getDefaults(data, type), properties, type);
+    }else{
+        return new Promise(function(resolve, reject){
+            self.getDefaults(data, type).then(function(defaults){
+                resolve(self.buildSchemaProperties(defaults, properties, type));
+            }).catch(function(err){reject(err)})
+        });
+    }
 };
+
 
 /*
- * Read
+ * Build Schema Properties
+ *
+ * @params
+ * defaults - default object properties
+ * data - an afObject coming from snapshot build
+ * type - available options: snapshot, primary, secondary & foreign
+ * @returns - final schema object
  * */
 
-Schema.prototype.snapshotDefaults = function(snapshot){
-    if(snapshot){
-        return {
-            $key: snapshot.key,
-            creationTS: snapshot.val().creationTS,
-            lastEventTS: snapshot.val().lastEventTS,
-            latestServerTS: snapshot.val().latestServerTS,
-            $priority: snapshot.getPriority() || this.getPriority(snapshot)
-        };
-    }else{
-        return {};
-    }
-};
-
-Schema.prototype.localDefaults = function(data){
-    if(data){
-        var currentClientTS = new Date().getTime();
-        return {
-            creationTS: data.creationTS || currentClientTS,
-            lastEventTS: currentClientTS,
-            latestServerTS: firebase.database.ServerValue.TIMESTAMP,
-            '.priority': data.$priority  || this.getPriority(data)
-        };
-    }else{
-        return {};
-    }
-
-};
-
-
-Schema.prototype.foreignerDefaults = function(data){
-    if(data){
-        var currentClientTS = new Date().getTime();
-        return {
-            key: data.$key,
-            creationTS: data.creationTS || currentClientTS,
-            lastEventTS: currentClientTS,
-            latestServerTS: firebase.database.ServerValue.TIMESTAMP,
-            '.priority': data.$priority  || this.getPriority(data)
-        };
-    }else{
-        return {};
-    }
-
-};
-
-
-Schema.prototype.getPriority = function(data){
+Schema.prototype.buildSchemaProperties = function(defaults, data, type){
     var self = this;
-    var valueHandler = new ValueHandler();
-    var priority = null;
-    var currentClientTS = new Date().getTime();
-    if(typeof self.priority == 'string'){
-        switch(self.priority){
-            case 'asc':
-                priority = currentClientTS;
-                break;
-            case 'desc':
-                priority = -(currentClientTS);
-                break;
-            default:
-                priority = valueHandler.getValue(self.priority, data);
-                break;
-        }
-    }else{
-        priority = valueHandler.getValue(self.priority, data);
-    }
-    return priority;
-};
-
-
-/*
- * Schema Properties
- * */
-Schema.prototype.buildSchemaProperties = function(defaults, data){
     var dataObject = defaults;
-    for (var key in this) {
-        if (!this.hasOwnProperty(key)) continue;
-        if(key != 'priority'){
-            dataObject[key] = this.getPropertyValue({
-                key: key,
-                value: data[key]
-            }, data);
-        }
+    var selfSchema;
+    if(type == 'snapshot'){
+        selfSchema = self['primary'];
+        type = 'primary';
+    }else{
+        selfSchema = self[type];
+    }
+    for (var key in selfSchema) {
+        if (!selfSchema.hasOwnProperty(key)) continue;
+        dataObject[key] = self.getPropertyValue({
+            key: key,
+            value: data[key]
+        }, data, type);
     }
     return dataObject;
 };
 
 
 /*
- * Getters
+ * Get Property Value
+ *
+ * @params
+ * propertyObject - default object properties
+ * propertiesData - an afObject coming from snapshot build
+ * type - available options: snapshot, primary, secondary & foreign
+ * @returns - final schema object
  * */
-Schema.prototype.getPropertyValue = function(propertyObject, propertiesData){
+
+Schema.prototype.getPropertyValue = function(propertyObject, propertiesData, type){
     var self = this;
     var valueHandler = new ValueHandler();
     var dataValue;
 
-    if(self[propertyObject.key].value == '='){
+    if(self[type][propertyObject.key].value == '='){
         dataValue =
             valueHandler.getValue(propertyObject.value, propertiesData) ||
-            valueHandler.getValue(self[propertyObject.key].default, propertiesData);
+            valueHandler.getValue(self[type][propertyObject.key].default, propertiesData);
     }else{
         dataValue =
-            valueHandler.getValue(self[propertyObject.key].value, propertiesData) ||
-            valueHandler.getValue(self[propertyObject.key].default, propertiesData);
+            valueHandler.getValue(self[type][propertyObject.key].value, propertiesData) ||
+            valueHandler.getValue(self[type][propertyObject.key].default, propertiesData);
     }
-
     return dataValue;
+};
+
+
+/*
+ * Get Defaults
+ *
+ * @params
+ * data - an afObject coming from snapshot build
+ * type - available options: snapshot, primary, secondary & foreign
+ * @returns - proper formatted object with desired schema defaults
+ * */
+
+Schema.prototype.getDefaults = function(data, type){
+    var self = this;
+    if(self.$afPriority.order == 'custom'){
+        return new Promise(function(resolve, reject){
+            self.$afPriority.getPriority(data).then(function(defaultPriority){
+                resolve(self.default[type](data, defaultPriority));
+            }).catch(function(err){reject(err)})
+        });
+    }else{
+        return self.default[type](data, self.$afPriority.getPriority(data));
+    }
+};
+
+
+/*
+ * Default.type
+ *
+ * @params
+ * data - an afObject coming from snapshot build
+ * defaultPriority - predetermined priority of the item
+ * type - available options: snapshot, primary, secondary & foreign
+ * @returns - final schema object
+ * */
+
+Schema.prototype.default = {
+    snapshot: function(data, defaultPriority){
+        return {
+            $key: data.key,
+            creationTS: data.val().creationTS,
+            lastEventTS: data.val().lastEventTS,
+            latestServerTS: data.val().latestServerTS,
+            $priority: data.getPriority() || defaultPriority
+        }
+    },
+    primary: function(data, defaultPriority){
+        var currentClientTS = new Date().getTime();
+        return {
+            creationTS: data.creationTS || currentClientTS,
+            lastEventTS: currentClientTS,
+            latestServerTS: firebase.database.ServerValue.TIMESTAMP,
+            '.priority': data.$priority  || defaultPriority
+        }
+    },
+    secondary: function(data, defaultPriority){
+        var currentClientTS = new Date().getTime();
+        return {
+            creationTS: data.creationTS || currentClientTS,
+            lastEventTS: currentClientTS,
+            latestServerTS: firebase.database.ServerValue.TIMESTAMP,
+            '.priority': data.$priority  || defaultPriority
+        }
+    },
+    foreign: function(data, defaultPriority){
+        var currentClientTS = new Date().getTime();
+        return {
+            key: data.$key,
+            creationTS: data.creationTS || currentClientTS,
+            lastEventTS: currentClientTS,
+            latestServerTS: firebase.database.ServerValue.TIMESTAMP,
+            '.priority': data.$priority  || defaultPriority
+        }
+    }
 };

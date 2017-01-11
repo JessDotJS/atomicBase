@@ -13,15 +13,17 @@ var Group = function(){
 
         refs: {
             primary: 'groups',
-            /*foreign: function(group){
+            foreign: function(group){
+                var userClass = new User();
                 return new Promise(function(resolve, reject){
-                    resolve([
-                        'foreign/1/foreignTest/1/' + test.$key,
-                        'foreign/2/foreignTest/2/' + test.$key,
-                        'foreign/3/foreignTest/3/' + test.$key
-                    ]);
+                    var refArray = [];
+                    for (var key in group.users) {
+                        if (!group.users.hasOwnProperty(key)) continue;
+                        refArray.push(userClass.db.ref.primary + '/' + key + '/groups/' + group.$key || group.key);
+                    }
+                    resolve(refArray);
                 });
-            }*/
+            }
         },
 
 
@@ -30,16 +32,35 @@ var Group = function(){
          * */
 
         schema: {
-            name: {
-                value: '='
+            primary: {
+                name: {
+                    value: '='
+                },
+                tasks: {
+                    value: '='
+                },
+                users: {
+                    value: '='
+                }
             },
-            tasks: {
-                value: '='
+            secondary: {
+                name: {
+                    value: '='
+                },
+                tasks: {
+                    value: '='
+                },
+                users: {
+                    value: '='
+                }
             },
-            users: {
-                value: '='
+            foreign: {
+                name: {
+                    value: '='
+                }
             },
-            priority: 'desc'// Default = 'asc'
+
+            priority: 'dateDesc'
         }
     });
 };

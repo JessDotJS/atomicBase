@@ -2,7 +2,7 @@
     <form name="peopleForm" ng-submit="save()">
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>People</h2>
+                <h2>Assign to Group</h2>
                 <span flex></span>
                 <md-button class="md-icon-button" ng-click="cancel()">
                     <md-icon aria-label="close" class="material-icons step">close</md-icon>
@@ -13,12 +13,12 @@
         <md-dialog-content>
             <div class="md-dialog-content">
                 <div layout="column">
-                    <md-select ng-model="weapon" placeholder="Weapon" class="md-no-underline">
-                        <md-option value="axe">Axe</md-option>
-                        <md-option value="sword">Sword</md-option>
-                        <md-option value="wand">Wand</md-option>
-                        <md-option value="pen">Pen?</md-option>
-                    </md-select>
+                    <md-list>
+                        <md-list-item ng-repeat="item in groupArray.items"
+                                      ng-click="assignToGroup(selectedItem, item)">
+                            <p>{{item.name}}</p>
+                        </md-list-item>
+                    </md-list>
 
 
                     <!--<div class="md-padding align-center">

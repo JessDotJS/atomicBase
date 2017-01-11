@@ -4,8 +4,8 @@
 'use strict';
 
 var User = function(){
-
-    this.db = new Database({
+    var self = this;
+    self.db = new Database({
 
         /*
          * Refs Related
@@ -13,15 +13,17 @@ var User = function(){
 
         refs: {
             primary: 'users',
-            /*foreign: function(user){
+            foreign: function(user){
+                var groupClass = new Group();
                 return new Promise(function(resolve, reject){
-                    resolve([
-                        'foreign/1/foreignTest/1/' + test.$key,
-                        'foreign/2/foreignTest/2/' + test.$key,
-                        'foreign/3/foreignTest/3/' + test.$key
-                    ]);
+                    var refArray = [];
+                    for (var key in user.groups) {
+                        if (!user.groups.hasOwnProperty(key)) continue;
+                        refArray.push(groupClass.db.ref.primary + '/' + key + '/users/' + user.$key || user.key);
+                    }
+                    resolve(refArray);
                 });
-            }*/
+            }
         },
 
 
@@ -30,23 +32,47 @@ var User = function(){
          * */
 
         schema: {
-            name: {
-                value: '='
+            primary: {
+                name: {
+                    value: '='
+                },
+                groups: {
+                    value: '='
+                },
+                tasks: {
+                    value: '='
+                }
             },
-            group: {
-                value: '='
+
+            secondary: {
+                name: {
+                    value: '='
+                },
+                groups: {
+                    value: '='
+                },
+                tasks: {
+                    value: '='
+                }
             },
-            tasks: {
-                value: '='
+
+            foreign: {
+                name: {
+                    value: '='
+                }
             },
-            priority: 'desc'// Default = 'asc'
+
+            priority: {
+                order: 'dateDesc'
+            }
         }
     });
 };
 
 
 
-User.prototype.alterUserGroups = function(user, group){
+
+User.prototype.assignToGroup = function(user, group){
     var self = this;
     var groupClass = new Group();
     var userGroup;
@@ -54,24 +80,37 @@ User.prototype.alterUserGroups = function(user, group){
     if(user.groups == undefined)user.groups = {};
     if(group.users == undefined)group.users = {};
     return new Promise(function(resolve, reject){
-        self.isAssigned(user, group).then(function(isAssigned){
-            if(isAssigned){
-                userGroup = {};
-                groupUser = {};
-            }else{
-                userGroup = self.db.schema.build(user, 'foreign');
-                groupUser = groupClass.db.schema.build(user, 'foreign');
-            }
-            group.users[user.$key] = userGroup;
-            user.groups[group.$key] = groupUser;
-        }).catch(function(err){reject(err)});
-        self.db.query.update(self.db.schema.build(user, 'local'))
+        userGroup = self.db.schema.build(user, 'foreign');
+        groupUser = groupClass.db.schema.build(group, 'foreign');
+        group.users[user.$key] = userGroup;
+        user.groups[group.$key] = groupUser;
+        self.db.query.update(user)
             .then(function(){
-            groupClass.db.query.update(groupClass.db.schema.build(group, 'local'))
-                .then(function(){
-                    resolve(true);
-                }).catch(function(err){reject(err)});
-        }).catch(function(err){reject(err)});
+                groupClass.db.query.update(group)
+                    .then(function(){
+                        resolve(true);
+                    }).catch(function(err){reject(err)});
+            }).catch(function(err){reject(err)});
+    });
+};
+
+User.prototype.unassignFromGroup = function(user, group){
+    var self = this;
+    var groupClass = new Group();
+    var userGroup;
+    var groupUser;
+    if(user.groups == undefined)user.groups = {};
+    if(group.users == undefined)group.users = {};
+    return new Promise(function(resolve, reject){
+        group.users[user.$key] = {};
+        user.groups[group.$key] = {};
+        self.db.query.update(user)
+            .then(function(){
+                groupClass.db.query.update(group)
+                    .then(function(){
+                        resolve(true);
+                    }).catch(function(err){reject(err)});
+            }).catch(function(err){reject(err)});
     });
 };
 
@@ -83,4 +122,13 @@ User.prototype.isAssigned = function(user, group){
             resolve(snapshot.exists());
         }).catch(function(err){reject(err)});
     });
+};
+
+
+/*
+* Foreign Locations
+* */
+
+User.prototype.retrieveGroupRefs = function(){
+
 };

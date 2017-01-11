@@ -26,10 +26,10 @@ af.component('users', {
 
 
             /*
-            * $afArray
+            * AtomicArray
             * */
-            $scope.userArray = user.db.$afArray;
-            $scope.groupArray = group.db.$afArray;
+            $scope.userArray = user.db.atomicArray;
+            $scope.groupArray = group.db.atomicArray;
 
             $scope.userArray.$on();
             $scope.groupArray.$on();

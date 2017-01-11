@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var $afObject = function(afObjectObject){
+var AtomicObject = function(afObjectObject){
     this.id = 0;
     this.ref = infiniteDisplayConfig.ref;
     this.objectBuilder = infiniteDisplayConfig.objectBuilder;

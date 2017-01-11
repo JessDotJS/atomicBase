@@ -4,15 +4,15 @@
 /*
 * Schema initialization
 *
-* @param - Schema Object & $afPriority
+* @param - Schema Object & atomicPriority
 * @returns - void
 * */
 
-var Schema = function(schema, $afPriority){
+var Schema = function(schema, atomicPriority){
     if(schema != undefined && schema != null){
         var schemaUtilities = new SchemaUtilities();
 
-        this.$afPriority = $afPriority;
+        this.atomicPriority = atomicPriority;
 
         //Build Schema Configuration Objects
         this.primary = schemaUtilities.retrieveConfiguration(schema.primary);
@@ -122,14 +122,14 @@ Schema.prototype.getPropertyValue = function(propertyObject, propertiesData, typ
 
 Schema.prototype.getDefaults = function(data, type){
     var self = this;
-    if(self.$afPriority.order == 'custom'){
+    if(self.atomicPriority.order == 'custom'){
         return new Promise(function(resolve, reject){
-            self.$afPriority.getPriority(data).then(function(defaultPriority){
+            self.atomicPriority.getPriority(data).then(function(defaultPriority){
                 resolve(self.default[type](data, defaultPriority));
             }).catch(function(err){reject(err)})
         });
     }else{
-        return self.default[type](data, self.$afPriority.getPriority(data));
+        return self.default[type](data, self.atomicPriority.getPriority(data));
     }
 };
 

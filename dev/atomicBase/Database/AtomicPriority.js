@@ -4,7 +4,7 @@
 * Custom ordering is not recommended for large sets of data
 * */
 
-var $afPriority = function(config, ref){
+var AtomicPriority = function(config, ref){
     this.ref = ref;
     this.increment = 50000000;
 
@@ -17,7 +17,7 @@ var $afPriority = function(config, ref){
 
 };
 
-$afPriority.prototype.getPriority = function(){
+AtomicPriority.prototype.getPriority = function(){
     var self = this;
     if(self.orderSelected != undefined){
         if(self.orderSelected == 'custom'){
@@ -36,18 +36,18 @@ $afPriority.prototype.getPriority = function(){
 };
 
 
-$afPriority.prototype.dateDesc = function(){
+AtomicPriority.prototype.dateDesc = function(){
     var currentClientTS = new Date().getTime();
     return -(currentClientTS);
 };
 
-$afPriority.prototype.dateAsc = function(){
+AtomicPriority.prototype.dateAsc = function(){
     return new Date().getTime();
 };
 
 
 
-$afPriority.prototype.first = function(){
+AtomicPriority.prototype.first = function(){
     var self = this;
     var refQuery = self.ref.root.child(self.ref.primary)
         .limitToFirst(1)
@@ -63,7 +63,7 @@ $afPriority.prototype.first = function(){
     });
 };
 
-$afPriority.prototype.last = function(){
+AtomicPriority.prototype.last = function(){
     var self = this;
     var refQuery = self.ref.root.child(self.ref.primary)
         .limitToLast(1)
@@ -80,7 +80,7 @@ $afPriority.prototype.last = function(){
 };
 
 
-$afPriority.prototype.previous = function(previousItem){
+AtomicPriority.prototype.previous = function(previousItem){
     var self = this;
     var refQuery = self.ref.root.child(self.ref.primary)
         .endAt(previousItem.$priority)
@@ -97,7 +97,7 @@ $afPriority.prototype.previous = function(previousItem){
     });
 };
 
-$afPriority.prototype.next = function(nextItem){
+AtomicPriority.prototype.next = function(nextItem){
     var self = this;
     var refQuery = self.ref.root.child(self.ref.primary)
         .startAt(nextItem.$priority)
@@ -114,7 +114,7 @@ $afPriority.prototype.next = function(nextItem){
     });
 };
 
-$afPriority.prototype.isFirst = function(item){
+AtomicPriority.prototype.isFirst = function(item){
     var self = this;
     return new Promise(function(resolve, reject){
         self.first().then(function(firstPosition){
@@ -127,7 +127,7 @@ $afPriority.prototype.isFirst = function(item){
     });
 };
 
-$afPriority.prototype.isLast = function(item){
+AtomicPriority.prototype.isLast = function(item){
     var self = this;
     return new Promise(function(resolve, reject){
         self.last().then(function(lastPosition){

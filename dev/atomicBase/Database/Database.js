@@ -15,12 +15,12 @@ var Database = function(databaseObject){
      * $afPriority Related
      * */
 
-    this.$afPriority = new $afPriority(databaseObject.schema.priority, this.ref);
+    this.atomicPriority = new AtomicPriority(databaseObject.schema.priority, this.ref);
 
     /*
      * Schema Related
      * */
-    this.schema = new Schema(databaseObject.schema, this.$afPriority);
+    this.schema = new Schema(databaseObject.schema, this.atomicPriority);
 
 
     /*
@@ -38,7 +38,7 @@ var Database = function(databaseObject){
     /*
      * $afArray Related
      * */
-    this.$afArray = new $afArray(this.ref, this.schema, this.server);
+    this.atomicArray = new AtomicArray(this.ref, this.schema, this.server);
 
 
 };

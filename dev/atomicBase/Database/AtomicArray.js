@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var $afArray = function(ref, schema, server){
+var AtomicArray = function(ref, schema, server){
     this.ref = ref;
     this.schema = schema;
     this.server = server;
@@ -11,7 +11,7 @@ var $afArray = function(ref, schema, server){
 
 
 
-$afArray.prototype.$on = function(afArrayObject){
+AtomicArray.prototype.$on = function(afArrayObject){
     var self = this;
     self.id = 0;
 
@@ -53,7 +53,7 @@ $afArray.prototype.$on = function(afArrayObject){
 /*
 * Content Loaders
 * */
-$afArray.prototype.loadInitialLot = function(){
+AtomicArray.prototype.loadInitialLot = function(){
     var self = this;
     return new Promise(function(resolve, reject){
         var initialLotRef = self.ref.root.child(self.arrayRef).limitToFirst(self.query.initialLotSize);
@@ -78,7 +78,7 @@ $afArray.prototype.loadInitialLot = function(){
 };
 
 
-$afArray.prototype.loadNextLot = function(){
+AtomicArray.prototype.loadNextLot = function(){
     var self = this;
     return new Promise(function(resolve, reject){
         if(!self.fetching && self.items[parseInt(self.displayedItems) - 1] != undefined){
@@ -109,10 +109,10 @@ $afArray.prototype.loadNextLot = function(){
 
 
 /*
-* $afArray Event Dispatcher
+* AtomicArray Event Dispatcher
 * */
 
-$afArray.prototype.dispatchEvent = function(){
+AtomicArray.prototype.dispatchEvent = function(){
     var self = this;
     self.items.sort(self.sortItems());
     document.dispatchEvent( new CustomEvent('list_changed'));
@@ -123,7 +123,7 @@ $afArray.prototype.dispatchEvent = function(){
  * */
 
 
-$afArray.prototype.subscribe = function(){
+AtomicArray.prototype.subscribe = function(){
     var self = this;
     self.subscribed = true;
     self.eventListenerRef.on('child_added', function(snapshot) {
@@ -156,12 +156,12 @@ $afArray.prototype.subscribe = function(){
  * Deactivators
  * */
 
-$afArray.prototype.$off = function(){
+AtomicArray.prototype.$off = function(){
     this.unsubscribe();
     this.resetDefaults();
 };
 
-$afArray.prototype.unsubscribe = function(){
+AtomicArray.prototype.unsubscribe = function(){
     var self = this;
     if(self.subscribed){
         self.eventListenerRef.off('child_added');
@@ -172,7 +172,7 @@ $afArray.prototype.unsubscribe = function(){
     }
 };
 
-$afArray.prototype.resetDefaults = function(){
+AtomicArray.prototype.resetDefaults = function(){
     this.arrayRef = null;
     this.query = null;
     self.listSort = null;
@@ -190,7 +190,7 @@ $afArray.prototype.resetDefaults = function(){
 * Item Handlers
 * */
 
-$afArray.prototype.addItem = function(snapshot, isNew){
+AtomicArray.prototype.addItem = function(snapshot, isNew){
     var self = this;
     if(!self.itemExists(snapshot)){
         var afObject = self.schema.build(snapshot, 'snapshot');
@@ -200,7 +200,7 @@ $afArray.prototype.addItem = function(snapshot, isNew){
     }
 };
 
-$afArray.prototype.editItem = function(snapshot){
+AtomicArray.prototype.editItem = function(snapshot){
     var self = this;
     var afObject = self.schema.build(snapshot, 'snapshot');
     for(var i = 0; i < self.items.length; i++){
@@ -210,7 +210,7 @@ $afArray.prototype.editItem = function(snapshot){
     }
 };
 
-$afArray.prototype.removeItem = function(snapshot){
+AtomicArray.prototype.removeItem = function(snapshot){
     var self = this;
     for(var i = 0; i < self.items.length; i++){
         if(self.items[i].$key == snapshot.key){
@@ -221,7 +221,7 @@ $afArray.prototype.removeItem = function(snapshot){
 };
 
 
-$afArray.prototype.itemExists = function(snapshot){
+AtomicArray.prototype.itemExists = function(snapshot){
     var self = this;
     var exists = false;
     for(var i = 0; i < self.items.length; i++){
@@ -237,7 +237,7 @@ $afArray.prototype.itemExists = function(snapshot){
 * Sorting Functionality
 * */
 
-$afArray.prototype.sortItems = function(){
+AtomicArray.prototype.sortItems = function(){
     var self = this;
     if(typeof self.listSort == 'string'){
         return self.builtInSort[self.listSort];
@@ -246,7 +246,7 @@ $afArray.prototype.sortItems = function(){
     }
 };
 
-$afArray.prototype.builtInSort = {
+AtomicArray.prototype.builtInSort = {
     desc: function(a, b){
         return parseFloat(a.$priority) - parseFloat(b.$priority);
     },
@@ -259,7 +259,7 @@ $afArray.prototype.builtInSort = {
 * ID Generation
 * */
 
-$afArray.prototype.generateInstanceID = function(){
+AtomicArray.prototype.generateInstanceID = function(){
     return this.generateRandomNumbers() +
         this.generateRandomNumbers() + '-' +
         this.generateRandomNumbers() + '-' +
@@ -270,7 +270,7 @@ $afArray.prototype.generateInstanceID = function(){
         this.generateRandomNumbers();
 };
 
-$afArray.prototype.generateRandomNumbers = function(){
+AtomicArray.prototype.generateRandomNumbers = function(){
     return Math.floor((1 + Math.random()) * 0x10000)
         .toString(16)
         .substring(1);

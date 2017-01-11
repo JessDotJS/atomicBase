@@ -22,11 +22,11 @@ af.component('tasks', {
             $scope.updateFile = false;
 
             /*
-            * $afArray
+            * AtomicArray
             * */
-            $scope.$afArray = task.db.$afArray;
+            $scope.atomicArray = task.db.atomicArray;
 
-            $scope.$afArray.$on();
+            $scope.atomicArray.$on();
 
             document.addEventListener('list_changed', function (e) {
                 $timeout(function(){});
@@ -34,7 +34,7 @@ af.component('tasks', {
 
 
             $rootScope.$on("$stateChangeSuccess",function() {
-                $scope.$afArray.$off();
+                $scope.atomicArray.$off();
             });
 
 

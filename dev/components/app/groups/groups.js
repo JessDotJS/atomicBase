@@ -22,11 +22,11 @@ af.component('groups', {
             $scope.updateFile = false;
 
             /*
-            * $afArray
+            * AtomicArray
             * */
-            $scope.$afArray = group.db.$afArray;
+            $scope.atomicArray = group.db.atomicArray;
 
-            $scope.$afArray.$on();
+            $scope.atomicArray.$on();
 
             document.addEventListener('list_changed', function (e) {
                 $timeout(function(){});
@@ -34,7 +34,7 @@ af.component('groups', {
 
 
             $rootScope.$on("$stateChangeSuccess",function() {
-                $scope.$afArray.$off();
+                $scope.atomicArray.$off();
             });
 
 

@@ -1,14 +1,14 @@
 {
-  "name": "atomic-firebase-schema",
+  "name": "atomic-base",
   "version": "0.0.1",
-  "description": "Atomic Firebase Schema Engine",
+  "description": "Firebase framework",
   "main": "index.js",
   "scripts": {
     "test": "test"
   },
   "repository": {
     "type": "git",
-    "url": "https://www.github.com/mangoklie/Atomic-Firebase"
+    "url": "https://github.com/JessDotJS/atomicBase"
   },
   "keywords": [
     "AngularJS",
@@ -18,7 +18,7 @@
     "Time",
     "Database"
   ],
-  "author": "Atomic <af-framework@atomicprojects.io>",
+  "author": "Atomic <atomicbase@atomicprojects.io>",
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.1",

@@ -1,9 +1,7 @@
 {
-  "name": "atomicFirebaseSchema",
-  "authors": [
-    "Jess <jessmanny19@gmail.com>"
-  ],
-  "description": "Atomic Firebase Schema Engine",
+  "name": "atomic-base",
+  "authors": ["Jesus Graterol <jesusg@atomicprojects.io>"],
+  "description": "Firebase Framework",
   "main": "index.js",
   "keywords": [
     "Angularjs",
@@ -11,10 +9,11 @@
     "Javascript",
     "Real",
     "Time",
-    "Database"
+    "Database",
+    "React"
   ],
   "license": "MIT",
-  "homepage": "https://www.github.com/mangoklie/Atomic-Firebase",
+  "homepage": "https://github.com/JessDotJS/atomicBase",
   "ignore": [
     "**/.*",
     "node_modules",

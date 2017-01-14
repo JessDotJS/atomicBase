@@ -1,5 +1,5 @@
 {
-  "name": "atomic-base",
+  "name": "atomicBase",
   "authors": ["Jesus Graterol <jesusg@atomicprojects.io>"],
   "description": "Firebase Framework",
   "main": "index.js",
@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "angular": "1.6.1",
-    "firebase": "^3.6.4",
+    "firebase": "latest",
     "angular-material": "^1.1.1",
     "angular-ui-router": "latest",
     "angularAnimation": "*"

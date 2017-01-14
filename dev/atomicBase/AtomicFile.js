@@ -93,7 +93,7 @@ AtomicFile.prototype.getFileExtension = function(file){
         return 'gif'
     }else if(file.type == 'image/png'){
         return 'png'
-    }else if(file.type == 'svg'){
+    }else if(file.type == 'image/svg'){
         return 'svg'
     }
 };

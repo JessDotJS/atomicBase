@@ -13,49 +13,33 @@
         </div>
     </md-toolbar>
 
-    <md-list flex style="margin:0px;padding:0px;"
-             md-whiteframe="4">
-        <md-list-item class="md-2-line" ng-repeat="item in userArray.items" ng-click="null">
-            <div class="md-list-item-text" layout="column" >
-                <h3>{{ item.name }}</h3>
-                <p>{{ item.description }}</p>
-            </div>
-
-
-            <md-menu-bar style="margin:0px;padding:0px;">
-                <md-menu md-position-mode="target-right target">
-                    <md-button aria-label="Buscar" class="md-icon-button" ng-click="$mdOpenMenu()">
-                        <md-icon aria-label="more_vert" class="material-icons step">more_vert</md-icon>
-                    </md-button>
-                    <md-menu-content>
-
-                        <md-menu-item>
-                            <md-button ng-click="showAssignmentForm($event, item)">
-                                <md-icon aria-label="assignment" class="material-icons step">assignment</md-icon> Assign to Group
-                            </md-button>
-                        </md-menu-item>
-
-                        <md-menu-divider></md-menu-divider>
-
-                        <md-menu-item>
-                            <md-button ng-click="selectItem($event, item)">
-                                <md-icon aria-label="mode_edit" class="material-icons step">mode_edit</md-icon> Editar
-                            </md-button>
-                        </md-menu-item>
-
-                        <md-menu-divider></md-menu-divider>
-
-                        <md-menu-item>
-                            <md-button ng-click="remove(item)">
-                                <md-icon aria-label="delete"
-                                         class="material-icons step">delete</md-icon> Eliminar
-                            </md-button>
-                        </md-menu-item>
-                    </md-menu-content>
-                </md-menu>
-            </md-menu-bar>
-        </md-list-item>
-    </md-list>
+    <div>
+        <md-card ng-repeat="item in userArray.items"
+                 style="margin:10px 0 10px 0;padding:0px;cursor: pointer;outline:none;"
+                ng-click="selectItem($event, item)">
+            <md-card-header>
+                <md-card-avatar>
+                    <img class="md-user-avatar" src="assets/male.png"/>
+                </md-card-avatar>
+                <md-card-header-text>
+                    <span class="md-title">{{item.name}}</span>
+                    <span class="md-subhead">Click to alter.</span>
+                </md-card-header-text>
+            </md-card-header>
+            <md-card-title ng-show="item.groups">
+                <md-card-title-text>
+                    <span class="md-title">Groups</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content ng-show="item.groups">
+                <md-list flex style="margin:0px;padding:0px;">
+                    <md-list-item ng-repeat="group in item.groups">
+                        <p style="margin:0px;padding:0px;">{{ group.name }}</p>
+                    </md-list-item>
+                </md-list>
+            </md-card-content>
+        </md-card>
+    </div>
 </div>
 
 

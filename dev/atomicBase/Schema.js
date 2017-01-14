@@ -19,7 +19,7 @@ var Schema = function(schema, atomicPriority){
         this.secondary = schemaUtilities.retrieveConfiguration(schema.secondary);
         this.foreign = schemaUtilities.retrieveConfiguration(schema.foreign);
     }else{
-        throw "There was an error in your schema object. AF Schema couldn't initialize.";
+        throw "There was an error in your schema object.Schema couldn't initialize.";
     }
 };
 
@@ -99,13 +99,15 @@ Schema.prototype.getPropertyValue = function(propertyObject, propertiesData, typ
     var dataValue;
 
     if(self[type][propertyObject.key].value == '='){
-        dataValue =
-            valueHandler.getValue(propertyObject.value, propertiesData) ||
-            valueHandler.getValue(self[type][propertyObject.key].default, propertiesData);
+        dataValue = valueHandler.getValue(propertyObject.value, propertiesData);
+        if(dataValue == undefined || dataValue == null){
+            dataValue = valueHandler.getValue(self[type][propertyObject.key].default, propertiesData);
+        }
     }else{
-        dataValue =
-            valueHandler.getValue(self[type][propertyObject.key].value, propertiesData) ||
+        dataValue = valueHandler.getValue(self[type][propertyObject.key].value, propertiesData);
+        if(dataValue == undefined || dataValue == null){
             valueHandler.getValue(self[type][propertyObject.key].default, propertiesData);
+        }
     }
     return dataValue;
 };
@@ -147,7 +149,7 @@ Schema.prototype.getDefaults = function(data, type){
 Schema.prototype.default = {
     snapshot: function(data, defaultPriority){
         return {
-            $key: data.key,
+            $key: data.$key || data.key,
             creationTS: data.val().creationTS,
             lastEventTS: data.val().lastEventTS,
             latestServerTS: data.val().latestServerTS,
@@ -175,7 +177,7 @@ Schema.prototype.default = {
     foreign: function(data, defaultPriority){
         var currentClientTS = new Date().getTime();
         return {
-            key: data.$key,
+            key: data.$key || data.key,
             creationTS: data.creationTS || currentClientTS,
             lastEventTS: currentClientTS,
             latestServerTS: firebase.database.ServerValue.TIMESTAMP,

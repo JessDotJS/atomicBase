@@ -17,9 +17,9 @@ ValueHandler.prototype.getValue = function(value, data){
     var valueType = typeof value;
     if(value != undefined){
         if(valueType == 'string' || valueType == 'number' || valueType == 'object' || valueType == 'boolean'){
-            return self.handleNormal(value, data) || self.default;
+            return self.handleNormal(value, data);
         }else if(valueType == 'function'){
-            return self.handleFunction(value, data) || self.default;
+            return self.handleFunction(value, data);
         }
     }else{
         return self.default
@@ -32,9 +32,15 @@ ValueHandler.prototype.getValue = function(value, data){
  * */
 
 ValueHandler.prototype.handleNormal = function(value, data){
+    if(value == undefined){
+        value = self.default;
+    }
     return value;
 };
 
 ValueHandler.prototype.handleFunction = function(value, data){
+    if(value(data) == undefined){
+        value = self.default;
+    }
     return value(data);
 };

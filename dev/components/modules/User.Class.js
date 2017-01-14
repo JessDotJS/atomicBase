@@ -17,9 +17,11 @@ var User = function(){
                 var groupClass = new Group();
                 return new Promise(function(resolve, reject){
                     var refArray = [];
-                    for (var key in user.groups) {
-                        if (!user.groups.hasOwnProperty(key)) continue;
-                        refArray.push(groupClass.db.ref.primary + '/' + key + '/users/' + user.$key || user.key);
+                    if(user.groups){
+                        for (var key in user.groups) {
+                            if (!user.groups.hasOwnProperty(key)) continue;
+                            refArray.push(groupClass.db.ref.primary + '/' + key + '/users/' + user.$key || user.key);
+                        }
                     }
                     resolve(refArray);
                 });
@@ -80,10 +82,8 @@ User.prototype.assignToGroup = function(user, group){
     if(user.groups == undefined)user.groups = {};
     if(group.users == undefined)group.users = {};
     return new Promise(function(resolve, reject){
-        userGroup = self.db.schema.build(user, 'foreign');
-        groupUser = groupClass.db.schema.build(group, 'foreign');
-        group.users[user.$key] = userGroup;
-        user.groups[group.$key] = groupUser;
+        group.users[user.$key] = self.db.schema.build(user, 'foreign');
+        user.groups[group.$key] = groupClass.db.schema.build(group, 'foreign');
         self.db.query.update(user)
             .then(function(){
                 groupClass.db.query.update(group)
@@ -102,15 +102,16 @@ User.prototype.unassignFromGroup = function(user, group){
     if(user.groups == undefined)user.groups = {};
     if(group.users == undefined)group.users = {};
     return new Promise(function(resolve, reject){
-        group.users[user.$key] = {};
-        user.groups[group.$key] = {};
-        self.db.query.update(user)
+        delete group.users[user.$key];
+        delete user.groups[group.$key];
+        groupClass.db.query.update(group)
             .then(function(){
-                groupClass.db.query.update(group)
+                self.db.query.update(user)
                     .then(function(){
                         resolve(true);
                     }).catch(function(err){reject(err)});
             }).catch(function(err){reject(err)});
+
     });
 };
 
@@ -124,11 +125,3 @@ User.prototype.isAssigned = function(user, group){
     });
 };
 
-
-/*
-* Foreign Locations
-* */
-
-User.prototype.retrieveGroupRefs = function(){
-
-};

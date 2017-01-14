@@ -17,7 +17,7 @@ var AtomicPriority = function(config, ref){
 
 };
 
-AtomicPriority.prototype.getPriority = function(){
+AtomicPriority.prototype.getPriority = function(data){
     var self = this;
     if(self.orderSelected != undefined){
         if(self.orderSelected == 'custom'){
@@ -26,13 +26,14 @@ AtomicPriority.prototype.getPriority = function(){
                     resolve(defaultPriority);
                 }).catch(function(err){reject(err)});
             });
+        }else if(typeof self.orderSelected == 'function'){
+            return self.orderSelected(data);
         }else{
             return self[self.orderSelected]();
         }
     }else{
-        return 0;
+        return self.dateDesc();
     }
-
 };
 
 
@@ -50,12 +51,16 @@ AtomicPriority.prototype.dateAsc = function(){
 AtomicPriority.prototype.first = function(){
     var self = this;
     var refQuery = self.ref.root.child(self.ref.primary)
-        .limitToFirst(1)
-        .orderByPriority();
+        .orderByPriority()
+        .limitToFirst(1);
     return new Promise(function(resolve, reject){
         refQuery.once("value").then(function(snapshot){
-            if(snapshot.exists()){
-                resolve(parseInt(snapshot.getPriority()) / 2);
+            if(snapshot.val()){
+                var priority = 0;
+                snapshot.forEach(function(DataSnapshot) {
+                    priority = DataSnapshot.getPriority();
+                });
+                resolve(priority / 2)
             }else{
                 resolve(self.increment);
             }
@@ -66,12 +71,16 @@ AtomicPriority.prototype.first = function(){
 AtomicPriority.prototype.last = function(){
     var self = this;
     var refQuery = self.ref.root.child(self.ref.primary)
-        .limitToLast(1)
-        .orderByPriority();
+        .orderByPriority()
+        .limitToLast(1);
     return new Promise(function(resolve, reject){
         refQuery.once("value").then(function(snapshot){
-            if(snapshot.exists()){
-                resolve(parseInt(snapshot.getPriority()) + self.increment);
+            if(snapshot.val()){
+                var priority = 0;
+                snapshot.forEach(function(DataSnapshot) {
+                    priority = DataSnapshot.getPriority();
+                });
+                resolve(priority + self.increment)
             }else{
                 resolve(self.increment);
             }
@@ -83,14 +92,14 @@ AtomicPriority.prototype.last = function(){
 AtomicPriority.prototype.previous = function(previousItem){
     var self = this;
     var refQuery = self.ref.root.child(self.ref.primary)
+        .orderByPriority()
         .endAt(previousItem.$priority)
-        .limitToLast(2)
-        .orderByPriority();
+        .limitToLast(2);
     return new Promise(function(resolve, reject){
         refQuery.once("value").then(function(snapshot){
             var acum = 0;
             snapshot.forEach(function(itemSnapshot){
-                acum += parseInt(itemSnapshot.getPriority())
+                acum += itemSnapshot.getPriority()
             });
             resolve(acum / 2);
         }).catch(function(err){reject(err)});
@@ -100,19 +109,25 @@ AtomicPriority.prototype.previous = function(previousItem){
 AtomicPriority.prototype.next = function(nextItem){
     var self = this;
     var refQuery = self.ref.root.child(self.ref.primary)
+        .orderByPriority()
         .startAt(nextItem.$priority)
-        .limitToFirst(2)
-        .orderByPriority();
+        .limitToFirst(2);
     return new Promise(function(resolve, reject){
         refQuery.once("value").then(function(snapshot){
             var acum = 0;
             snapshot.forEach(function(itemSnapshot){
-                acum += parseInt(itemSnapshot.getPriority())
+                acum += itemSnapshot.getPriority()
             });
             resolve(acum / 2);
         }).catch(function(err){reject(err)});
     });
 };
+
+
+
+
+
+
 
 AtomicPriority.prototype.isFirst = function(item){
     var self = this;

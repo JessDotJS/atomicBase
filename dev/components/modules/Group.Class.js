@@ -14,6 +14,7 @@ var Group = function(){
         refs: {
             primary: 'groups',
             foreign: function(group){
+                var groupKey;
                 var userClass = new User();
                 return new Promise(function(resolve, reject){
                     var refArray = [];

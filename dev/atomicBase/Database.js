@@ -12,7 +12,7 @@ var Database = function(databaseObject){
     this.ref = new RefRegistrator(databaseObject.refs);
 
     /*
-     * $afPriority Related
+     * Atomic Priority Related
      * */
 
     this.atomicPriority = new AtomicPriority(databaseObject.schema.priority, this.ref);
@@ -36,9 +36,18 @@ var Database = function(databaseObject){
 
 
     /*
-     * $afArray Related
+     * Atomic Array Related
      * */
-    this.atomicArray = new AtomicArray(this.ref, this.schema, this.server);
+    this.atomicArray = new AtomicArray(this.ref, this.schema, this.server, this.atomicPriority, databaseObject.filters);
+
+
+
+    /*
+     * Atomic File Related
+     * */
+    this.atomicFile = new AtomicFile(this.ref);
+
+
 
 
 };

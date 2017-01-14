@@ -3,32 +3,32 @@
  */
 'use strict';
 
-var AtomicArray = function(ref, schema, server){
+var AtomicArray = function(ref, schema, server, atomicPriority, filters){
     this.ref = ref;
     this.schema = schema;
     this.server = server;
+    this.atomicPriority = atomicPriority;
+    this.filters = filters;
 };
 
 
 
-AtomicArray.prototype.$on = function(afArrayObject){
+AtomicArray.prototype.$on = function(atomicArrayObject){
     var self = this;
     self.id = 0;
 
-    if(afArrayObject != undefined){
-        self.arrayRef = afArrayObject.ref || self.ref.primary;
+    if(atomicArrayObject != undefined){
+        self.arrayRef = atomicArrayObject.ref || self.ref.primary;
         self.query = {
-            initialLotSize: afArrayObject.initialLotSize || 10,
-            nextLotSize: afArrayObject.nextLotSize || 12
+            initialLotSize: atomicArrayObject.initialLotSize || 10,
+            nextLotSize: atomicArrayObject.nextLotSize || 12
         };
-        self.listSort = afArrayObject.listSort || 'desc';
     }else{
         self.arrayRef = self.ref.primary;
         self.query = {
             initialLotSize: 10,
             nextLotSize: 12
         };
-        self.listSort = 'desc';
     }
 
     self.eventListenerRef = null;
@@ -69,7 +69,7 @@ AtomicArray.prototype.loadInitialLot = function(){
                         self.id = self.generateInstanceID();
                         self.initialLotLoaded = true;
                         self.subscribe();
-                        self.dispatchEvent();
+                        self.applyFilters();
                         resolve(self.id);
                     }).catch(function(err){reject(err)});
                 }).catch(function(err){reject(err)});
@@ -94,7 +94,7 @@ AtomicArray.prototype.loadNextLot = function(){
                 if(previousArrayLength == self.items.length){
                     self.itemsRemaining = false;
                 }
-                self.dispatchEvent();
+                self.applyFilters();
                 self.fetching = false;
                 resolve(true);
             }).catch(function(err){
@@ -112,10 +112,10 @@ AtomicArray.prototype.loadNextLot = function(){
 * AtomicArray Event Dispatcher
 * */
 
-AtomicArray.prototype.dispatchEvent = function(){
+AtomicArray.prototype.applyFilters = function(){
     var self = this;
     self.items.sort(self.sortItems());
-    document.dispatchEvent( new CustomEvent('list_changed'));
+    document.dispatchEvent( new CustomEvent(self.id + '_apply_filters'));
 };
 
 /*
@@ -129,25 +129,25 @@ AtomicArray.prototype.subscribe = function(){
     self.eventListenerRef.on('child_added', function(snapshot) {
         //console.log('child_added');
         self.addItem(snapshot, true);
-        self.dispatchEvent();
+        self.applyFilters();
     });
 
     self.eventListenerRef.on('child_changed', function(snapshot) {
         //console.log('child_changed');
         self.editItem(snapshot);
-        self.dispatchEvent();
+        self.applyFilters();
     });
 
     self.eventListenerRef.on('child_moved', function(snapshot) {
         //console.log('child_moved');
         self.editItem(snapshot);
-        self.dispatchEvent();
+        self.applyFilters();
     });
 
     self.eventListenerRef.on('child_removed', function(snapshot) {
         //console.log('child_removed');
         self.removeItem(snapshot);
-        self.dispatchEvent();
+        self.applyFilters();
     });
 };
 
@@ -175,7 +175,6 @@ AtomicArray.prototype.unsubscribe = function(){
 AtomicArray.prototype.resetDefaults = function(){
     this.arrayRef = null;
     this.query = null;
-    self.listSort = null;
     this.eventListenerRef = null;
     this.displayedItems = 0;
     this.subscribed = false;
@@ -239,19 +238,22 @@ AtomicArray.prototype.itemExists = function(snapshot){
 
 AtomicArray.prototype.sortItems = function(){
     var self = this;
-    if(typeof self.listSort == 'string'){
-        return self.builtInSort[self.listSort];
-    }else if(typeof self.listSort == 'function'){
-        return self.listSort
+    if(typeof self.atomicPriority.orderSelected == 'string'){
+        return self.builtInSort[self.atomicPriority.orderSelected];
+    }else if(typeof self.atomicPriority.orderSelected == 'function'){
+        return self.builtInSort['dateDesc'];
     }
 };
 
 AtomicArray.prototype.builtInSort = {
-    desc: function(a, b){
-        return parseFloat(a.$priority) - parseFloat(b.$priority);
+    custom: function(a, b){
+        return a.$priority - b.$priority;
     },
-    asc: function(a, b){
-        return parseFloat(a.$priority) + parseFloat(b.$priority);
+    dateDesc: function(a, b){
+        return a.$priority - b.$priority;
+    },
+    dateAsc: function(a, b){
+        return a.$priority + b.$priority;
     }
 };
 

@@ -7,6 +7,7 @@ var connect = require('gulp-connect');
 var ignore = require('gulp-ignore');
 var uglify = require('gulp-uglify');
 var clean = require('gulp-clean');
+var concat = require('gulp-concat');
 var runSequence = require('run-sequence');
 
 
@@ -44,6 +45,45 @@ gulp.task('connect-build', function () {
         root: 'app/',
         port: 7777
     });
+});
+
+
+gulp.task('concat', function() {
+    return gulp.src(
+        [
+            './dev/atomicBase/Database.js',
+            './dev/atomicBase/DatabaseUtilities.js',
+            './dev/atomicBase/RefRegistrator.js',
+            './dev/atomicBase/ValueHandler.js',
+            './dev/atomicBase/Schema.js',
+            './dev/atomicBase/SchemaUtilities.js',
+            './dev/atomicBase/Query.js',
+            './dev/atomicBase/AtomicArray.js',
+            './dev/atomicBase/AtomicObject.js',
+            './dev/atomicBase/AtomicPriority.js',
+            './dev/atomicBase/AtomicFile.js',
+            './dev/atomicBase/Server.js'
+        ])
+        .pipe(concat('atomicBase.min.js'))
+        .pipe(gulp.dest('./dist/'));
+});
+
+gulp.task('minify-concat', function() {
+    gulp.src(['./dist/*.js'])
+
+        .pipe(uglify({
+            // inSourceMap:
+            // outSourceMap: "app.js.map"
+        }))
+        .pipe(gulp.dest('./dist'))
+});
+
+gulp.task('build-dist', function() {
+    runSequence(
+        ['clean'],
+        ['concat'],
+        ['minify-concat']
+    );
 });
 
 

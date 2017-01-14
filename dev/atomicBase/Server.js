@@ -4,7 +4,7 @@
 'use strict';
 
 var Server = function(refObject){
-    this.serverRef = refObject.root.child('server')
+    this.serverRef = refObject.root.child('atomicBase/server')
 };
 
 

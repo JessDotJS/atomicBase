@@ -2,7 +2,8 @@
  * Created by Computadora on 09-Jan-17.
  */
 
-af.component('users', {
+af
+    .component('users', {
     templateUrl: '/components/app/users/users.html',
 
     controller: [
@@ -28,6 +29,8 @@ af.component('users', {
             /*
             * AtomicArray
             * */
+
+
             $scope.userArray = user.db.atomicArray;
             $scope.groupArray = group.db.atomicArray;
 
@@ -42,6 +45,9 @@ af.component('users', {
             $rootScope.$on("$stateChangeSuccess",function() {
                 $scope.userArray.$off();
                 $scope.groupArray.$off();
+                if($scope.userGroupsObject != undefined){
+                    $scope.userGroupsObject.$off();
+                }
             });
 
 
@@ -63,6 +69,7 @@ af.component('users', {
             };
 
             $scope.remove = function(item){
+                $scope.submitting = true;
                 user.db.query.remove(item).then(function(){
                     $scope.cancel();
                 }).catch(function(err){console.log(err)});
@@ -71,6 +78,7 @@ af.component('users', {
             $scope.selectItem = function(event, item){
                 $scope.itemSelected = true;
                 $scope.selectedItem = item;
+                $scope.userGroupsObject = new AtomicObject(user.db.ref, user.db.schema, user.db.ref.primary);
                 $scope.showForm(event);
             };
 
@@ -91,29 +99,35 @@ af.component('users', {
             * Assignment related
             * */
 
-            $scope.showAssignmentForm = function(event, item){
-                $scope.itemSelected = true;
-                $scope.selectedItem = item;
-                $mdDialog.show({
-                    scope: $scope,
-                    preserveScope: true,
-                    templateUrl: 'components/app/users/userAssignmentForm.html',
-                    parent: angular.element(document.body),
-                    targetEvent: event,
-                    clickOutsideToClose:false,
-                    fullscreen: true,
-                    escapeToClose: false
-                });
-            };
-
             $scope.assignToGroup = function(selectedUser, group){
                 user.assignToGroup(selectedUser, group).then(function(){
-                    $scope.cancel();
+
                 }).catch(function(err){
                     console.log(err);
                     $scope.cancel();
                 });
             };
+
+            $scope.unassignFromGroup = function(selectedUser, group){
+                user.unassignFromGroup(selectedUser, group).then(function(){
+
+                }).catch(function(err){
+                    console.log(err);
+                    $scope.cancel();
+                });
+            };
+
+
+            $scope.isInUserGroups = function(user, group){
+                if(user.groups != undefined && group != undefined){
+                    if(group.$key in user.groups){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+            };
+
 
             /*
             * Defaulter
@@ -125,9 +139,15 @@ af.component('users', {
                 $scope.selectedItem = {};
                 $scope.submitting = false;
                 $scope.updateFile = false;
+
+
+                if($scope.userGroupsObject != undefined){
+                    $scope.userGroupsObject.$off();
+                }
+
+
             }
 
 
         }]
 });
-

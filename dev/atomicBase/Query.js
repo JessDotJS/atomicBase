@@ -11,50 +11,50 @@ var Query = function(ref, schema){
 };
 
 
-Query.prototype.create = function(afObject){
+Query.prototype.create = function(atomicObject){
     var self = this;
     var fanoutObject = {};
     var primaryRef = self.ref.root.child(self.ref.primary);
     return new Promise(function(resolve, reject){
-        primaryRef.push(self.schema.build(afObject, 'primary')).then(function(snapshot){
-            afObject.$key = snapshot.key;
+        primaryRef.push(self.schema.build(atomicObject, 'primary')).then(function(snapshot){
+            atomicObject.$key = snapshot.key;
             if(self.ref.secondary){
-                self.ref.getSecondaryRefs(afObject).then(function(secondaryRefs){
+                self.ref.getSecondaryRefs(atomicObject).then(function(secondaryRefs){
                     for(var i = 0; i < secondaryRefs.length; i++){
-                        fanoutObject[secondaryRefs[i]] = self.schema.build(afObject, 'secondary')
+                        fanoutObject[secondaryRefs[i]] = self.schema.build(atomicObject, 'secondary')
                     }
                     self.processFanoutObject(fanoutObject).then(function(response){
-                        resolve(afObject.$key);
+                        resolve(atomicObject.$key);
                     }).catch(function(err){reject(err)});
                 }).catch(function(err){reject(err)});
             }else{
-                resolve(afObject.$key);
+                resolve(atomicObject.$key);
             }
         }).catch(function(err){reject(err)});
     });
 };
 
-Query.prototype.update = function(afObject){
+Query.prototype.update = function(atomicObject){
     var self = this;
     return new Promise(function(resolve, reject){
-        self.alter(afObject, 'update').then(function(response){
+        self.alter(atomicObject, 'update').then(function(response){
             resolve(response);
         }).catch(function(err){reject(err)});
     });
 };
 
-Query.prototype.remove = function(afObject){
+Query.prototype.remove = function(atomicObject){
     var self = this;
     return new Promise(function(resolve, reject){
-        self.alter(afObject, 'update').then(function(response){
-            self.alter(afObject, 'remove').then(function(response){
+        self.alter(atomicObject, 'update').then(function(response){
+            self.alter(atomicObject, 'remove').then(function(response){
                 resolve(response);
             }).catch(function(err){reject(err)});
         }).catch(function(err){reject(err)});
     });
 };
 
-Query.prototype.alter = function(afObject, type){
+Query.prototype.alter = function(atomicObject, type){
     var self = this;
     var fanoutObject = {};
 
@@ -63,9 +63,9 @@ Query.prototype.alter = function(afObject, type){
     var foreign;
 
     if(type == 'update'){
-        primary = self.schema.build(afObject, 'primary');
-        secondary = self.schema.build(afObject, 'secondary');
-        foreign = self.schema.build(afObject, 'foreign');
+        primary = self.schema.build(atomicObject, 'primary');
+        secondary = self.schema.build(atomicObject, 'secondary');
+        foreign = self.schema.build(atomicObject, 'foreign');
     }else if(type == 'remove'){
         primary = {};
         secondary = {};
@@ -77,14 +77,22 @@ Query.prototype.alter = function(afObject, type){
         /*
          * Primary Ref
          * */
-        fanoutObject[self.ref.primary + '/' + afObject.$key || afObject.key] = primary;
+
+        var objectKey;
+        if(atomicObject.$key == undefined){
+            objectKey = atomicObject.key;
+        }else{
+            objectKey = atomicObject.$key;
+        }
+
+        fanoutObject[self.ref.primary + '/' + objectKey] = primary;
 
         /*
          * Secondary & Foreign
          * */
         if(self.ref.secondary && self.ref.foreign){
-            self.ref.secondary(afObject).then(function(secondaryRefs){
-                self.ref.foreign(afObject).then(function(foreignRefs){
+            self.ref.secondary(atomicObject).then(function(secondaryRefs){
+                self.ref.foreign(atomicObject).then(function(foreignRefs){
                     for(var i = 0; i <secondaryRefs.length; i++){
                         fanoutObject[secondaryRefs[i]] = secondary;
                     }
@@ -101,7 +109,7 @@ Query.prototype.alter = function(afObject, type){
          * Secondary & !Foreign
          * */
         else if(self.ref.secondary && !self.ref.foreign){
-            self.ref.secondary(afObject).then(function(secondaryRefs){
+            self.ref.secondary(atomicObject).then(function(secondaryRefs){
                 for(var i = 0; i <secondaryRefs.length; i++){
                     fanoutObject[secondaryRefs[i]] = secondary;
                 }
@@ -115,7 +123,7 @@ Query.prototype.alter = function(afObject, type){
          * !Secondary & Foreign
          * */
         else if(!self.ref.secondary && self.ref.foreign){
-            self.ref.foreign(afObject).then(function(foreignRefs){
+            self.ref.foreign(atomicObject).then(function(foreignRefs){
                 for(var i = 0; i < foreignRefs.length; i++){
                     fanoutObject[foreignRefs[i]] = foreign;
                 }
@@ -147,4 +155,13 @@ Query.prototype.processFanoutObject = function (fanoutObject) {
     });
 };
 
-
+Query.prototype.set = function(atomicObject){
+    var self = this;
+    var fanoutObject = {};
+    var primaryRef = self.ref.root.child(self.ref.primary);
+    return new Promise(function(resolve, reject){
+        primaryRef.set(self.schema.build(atomicObject, 'primary')).then(function(snapshot){
+            resolve(true);
+        }).catch(function(err){reject(err)});
+    });
+};

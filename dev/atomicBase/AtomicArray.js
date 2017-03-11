@@ -81,7 +81,8 @@ AtomicArray.prototype.loadInitialLot = function(){
 AtomicArray.prototype.loadNextLot = function(){
     var self = this;
     return new Promise(function(resolve, reject){
-        if(!self.fetching && self.items[parseInt(self.displayedItems) - 1] != undefined){
+
+        if(!self.fetching && self.items[parseInt(self.displayedItems) - 1] != undefined != undefined && self.itemsRemaining){
             self.fetching = true;
             var previousArrayLength = self.items.length;
             var nextLotRef =
@@ -95,13 +96,16 @@ AtomicArray.prototype.loadNextLot = function(){
                     self.itemsRemaining = false;
                 }
                 self.applyFilters();
-                self.fetching = false;
-                resolve(true);
+                setTimeout(function(){
+                    self.fetching = false;
+                    resolve(true);
+                }, 5000);
+
             }).catch(function(err){
                 reject(err);
             });
         }else{
-            setTimeout(function(){  resolve(false) }, 4000);
+            resolve(false);
         }
     });
 

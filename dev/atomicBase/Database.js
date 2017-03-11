@@ -15,7 +15,8 @@ var Database = function(databaseObject){
      * Atomic Priority Related
      * */
 
-    this.atomicPriority = new AtomicPriority(databaseObject.schema.priority, this.ref);
+
+    this.atomicPriority = new AtomicPriority(databaseObject.schema.priority || null, this.ref);
 
     /*
      * Schema Related

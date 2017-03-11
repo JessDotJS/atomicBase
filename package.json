@@ -1,7 +1,7 @@
 {
-  "name": "atomic-base",
+  "name": "atomicbase",
   "version": "0.0.1",
-  "description": "Firebase framework",
+  "description": "Atomic Base",
   "main": "index.js",
   "scripts": {
     "test": "test"

@@ -27,3 +27,18 @@ Server.prototype.getTS = function(){
             }).catch(function(err){reject(err)});
     });
 };
+
+Server.prototype.getLatestTS = function(){
+    var self = this;
+    return new Promise(function(resolve, reject){
+        self.updateTS()
+            .then(function(snapshot){
+                self.getTS()
+                    .then(function(serverTS){
+                        resolve(serverTS)  ;
+                    })
+                    .catch(function(err){reject(err)});
+            })
+            .catch(function(err){reject(err)});
+    });
+};

@@ -38,7 +38,7 @@ Query.prototype.update = function(atomicObject){
     var self = this;
     return new Promise(function(resolve, reject){
         self.alter(atomicObject, 'update').then(function(response){
-            resolve(response);
+            resolve(true);
         }).catch(function(err){reject(err)});
     });
 };

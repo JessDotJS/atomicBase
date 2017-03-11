@@ -14,40 +14,23 @@ af.config(['$stateProvider', '$urlRouterProvider',
         $urlRouterProvider.otherwise("/app");
 
         $stateProvider
+            .state('intro', {
+                url: '/intro',
+                template: '<intro></intro>'
+            })
+
             .state('app', {
                 url: '/app',
-                template: '<app></app>'
+                template: '<app></app>',
+                abstract: true
             })
 
 
-
-            .state('afClass', {
-                url: '/afClass',
-                template: '<af-class></af-class>'
+            .state('app.dashboard', {
+                url: '/dashboard',
+                template: '<dashboard></dashboard>',
+                abstract: true
             })
-
-            .state('afArray', {
-                url: '/afArray',
-                template: '<af-array></af-array>'
-            })
-
-            .state('afObject', {
-                url: '/afObject',
-                template: '<af-object></af-object>'
-            })
-
-            .state('afOrder', {
-                url: '/afOrder',
-                template: '<af-order></af-order>'
-            })
-
-
-            .state('storage', {
-                url: '/storage',
-                abstract: true,
-                template: '<ui-view></ui-view>'
-            })
-
 
 
     }]);
@@ -63,7 +46,7 @@ af.run(['$rootScope', '$timeout', '$mdSidenav',
             }else{
                 $mdSidenav('right').open();
             }
-        }
+        };
 
 
         $rootScope.$on("$stateChangeSuccess",

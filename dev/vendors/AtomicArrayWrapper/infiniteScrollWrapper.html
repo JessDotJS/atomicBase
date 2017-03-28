@@ -1,0 +1,21 @@
+<div layout="column">
+    <div flex infinite-scroll="atomicArray.loadNextLot()"
+         infinite-scroll-distance="viewObject.distance"
+         infinite-scroll-immediate-check="false"
+         infinite-scroll-disabled="!atomicArray.initialLotLoaded"
+         infinite-scroll-container="viewObject.parentContainer">
+
+        <loader show="!contentLoaded" top="120"></loader>
+
+        <div ng-show="contentLoaded"
+             animation="viewObject.animation.type"
+             in="viewObject.animation.in"
+             out="viewObject.animation.out"
+             trigger="contentLoaded">
+            <div id="infinite-scroll-content" ng-include="viewObject.templateUrl"></div>
+        </div>
+    </div>
+
+    <loader show="atomicArray.fetching" top="25"></loader>
+</div>
+

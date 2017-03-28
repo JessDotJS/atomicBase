@@ -13,35 +13,5 @@
         </div>
     </md-toolbar>
 
-    <md-list flex style="margin:0px;padding:0px;" md-whiteframe="4">
-        <md-list-item class="md-2-line" ng-repeat="item in atomicArray.items" ng-click="null">
-            <div class="md-list-item-text" layout="column">
-                <h3>{{ item.name }}</h3>
-                <p>{{ item.description }}</p>
-            </div>
-            <md-menu-bar style="margin:0px;padding:0px;">
-                <md-menu md-position-mode="target-right target">
-                    <md-button aria-label="Buscar" class="md-icon-button" ng-click="$mdOpenMenu()">
-                        <md-icon aria-label="more_vert" class="material-icons step">more_vert</md-icon>
-                    </md-button>
-                    <md-menu-content>
-                        <md-menu-item>
-                            <md-button ng-click="selectItem($event, item)">
-                                <md-icon aria-label="mode_edit" class="material-icons step">mode_edit</md-icon> Editar
-                            </md-button>
-                        </md-menu-item>
-
-                        <md-menu-divider></md-menu-divider>
-
-                        <md-menu-item>
-                            <md-button ng-click="remove(item)">
-                                <md-icon aria-label="delete"
-                                         class="material-icons step">delete</md-icon> Eliminar
-                            </md-button>
-                        </md-menu-item>
-                    </md-menu-content>
-                </md-menu>
-            </md-menu-bar>
-        </md-list-item>
-    </md-list>
+    <atomic-array-wrapper config="config"></atomic-array-wrapper>
 </div>

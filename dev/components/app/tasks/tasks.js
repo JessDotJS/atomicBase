@@ -11,6 +11,20 @@ af.component('tasks', {
 
             var task = new Task();
 
+            $scope.config = {
+                atomicArray: task.db.atomicArray,
+                parentScope: $scope,
+                initialLotSize: 1000,
+                nextLotSize: 1000,
+                templateUrl: '/components/app/tasks/tasks.tpl.html',
+                wrapper: 'infiniteScroll',
+                animation: {
+                    type: 'entrance',
+                    in: 'zoomIn',
+                    out: 'zoomOut'
+                }
+            };
+
             /*
             * CRUD Related
             * */
@@ -19,35 +33,16 @@ af.component('tasks', {
 
             $scope.submitting = false;
 
-            $scope.updateFile = false;
-
-            /*
-            * AtomicArray
-            * */
-            $scope.atomicArray = task.db.atomicArray;
-
-            $scope.atomicArray.$on();
-
-            document.addEventListener('list_changed', function (e) {
-                $timeout(function(){});
-            }, false);
-
-
-            $rootScope.$on("$stateChangeSuccess",function() {
-                $scope.atomicArray.$off();
-            });
 
 
             $scope.save = function(){
                 $scope.submitting = true;
                 if($scope.itemSelected){
                     task.db.query.update($scope.selectedItem).then(function(){
-                        console.log('Task Updated');
                         $scope.cancel();
                     }).catch(function(err){console.log(err)});
                 }else{
                     task.db.query.create($scope.selectedItem).then(function(){
-                        console.log('Task Created');
                         $scope.cancel();
                     }).catch(function(err){console.log(err)});
                 }
@@ -55,7 +50,6 @@ af.component('tasks', {
 
             $scope.remove = function(item){
                 task.db.query.remove(item).then(function(){
-                    console.log('Task Deleted');
                     $scope.cancel();
                 }).catch(function(err){console.log(err)});
             };
@@ -84,7 +78,6 @@ af.component('tasks', {
                 $scope.itemSelected = false;
                 $scope.selectedItem = {};
                 $scope.submitting = false;
-                $scope.updateFile = false;
             }
 
 

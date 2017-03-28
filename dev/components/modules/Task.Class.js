@@ -52,7 +52,9 @@ var Task = function(){
                 }
             },
 
-            priority: 'dateDesc'
+            priority: {
+                order: 'dateDesc'
+            }
         }
     });
 };

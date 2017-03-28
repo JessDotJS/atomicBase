@@ -8,74 +8,22 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="vendors/bower_components/angular-material/angular-material.min.css">
     <link rel="stylesheet" href="vendors/bower_components/animate.css/animate.min.css">
-    <link rel="stylesheet" href="vendors/bower_components/angularAnimation/dist/angularAnimation.css">
+    <link rel="stylesheet" href="vendors/bower_components/angularAnimation/src/dist/angularAnimation.css">
 </head>
 <body style="overflow-y: hidden">
 
 <div layout="column" layout-fill ng-cloack>
     <div layout="row" flex>
-        <md-sidenav class="md-sidenav-right"
-                    md-whiteframe="7"
-                    md-component-id="right"
-                    flex>
-            <md-content>
-                <div layout="column">
-                    <md-subheader class="md-no-sticky">TESTING</md-subheader>
-                    <md-list flex style="padding:0px;">
-                        <md-list-item ui-sref="app">
-                            <p>Mock App</p>
-                        </md-list-item>
-                    </md-list>
-
-                    <md-subheader class="md-no-sticky">AF.DATABASE</md-subheader>
-
-                    <md-list flex style="padding:0px;">
-                        <md-list-item ui-sref="afClass">
-                            <p>AF Database Class</p>
-                        </md-list-item>
-                    </md-list>
-
-                    <md-list flex style="padding:0px;">
-                        <md-list-item ui-sref="afArray">
-                            <p>$afArray</p>
-                        </md-list-item>
-                    </md-list>
-
-                    <md-list flex  style="padding:0px;">
-                        <md-list-item ui-sref="afObject">
-                            <p>$afObject</p>
-                        </md-list-item>
-                    </md-list>
-
-                    <md-list flex style="padding:0px;">
-                        <md-list-item ui-sref="afOrder">
-                            <p>$afOrder</p>
-                        </md-list-item>
-                    </md-list>
-
-                    <md-subheader class="md-no-sticky">AF.STORAGE</md-subheader>
-
-                    <md-list flex style="padding:0px;">
-                        <md-list-item ui-sref="afStorage">
-                            <p>$afStorage</p>
-                        </md-list-item>
-                    </md-list>
-                </div>
-            </md-content>
-        </md-sidenav>
-
         <div layout="column" flex>
             <md-toolbar class="md-hue-3"
                         md-whiteframe="10"
                         style="margin:0px;">
                 <div class="md-toolbar-tools">
                     <h2 style="margin-left:5px;">
-                        <span>Atomic Firebase Tests</span>
+                        <span>AtomicBase</span>
                     </h2>
                     <span flex></span>
-                    <md-button class="md-icon-button" ng-click="$root.toggleSideNav()">
-                        <md-icon aria-label="menu" class="material-icons step">menu</md-icon>
-                    </md-button>
+                    Made with &hearts; by <a href="https://github.com/JessDotJS" target="_blank">JessDotJS</a>
                 </div>
             </md-toolbar>
             <div class="md-padding" style="overflow-y: scroll" flex>
@@ -98,7 +46,7 @@
 <script src="vendors/bower_components/angular-animate/angular-animate.min.js"></script>
 <script src="vendors/bower_components/angular-aria/angular-aria.min.js"></script>
 
-<script src="vendors/bower_components/angularAnimation/dist/angularAnimation.js"></script>
+<script src="vendors/bower_components/angularAnimation/src/dist/angularAnimation.js"></script>
 
 <!-- Firebase -->
 <script src="vendors/bower_components/firebase/firebase.js"></script>
@@ -110,17 +58,18 @@
 <!---------------------------
     Atomic Firebase Database
 ---------------------------->
-<script src="atomicBase/Database.js"></script>
-<script src="atomicBase/DatabaseUtilities.js"></script>
-<script src="atomicBase/RefRegistrator.js"></script>
-<script src="atomicBase/ValueHandler.js"></script>
-<script src="atomicBase/Schema.js"></script>
-<script src="atomicBase/SchemaUtilities.js"></script>
-<script src="atomicBase/Query.js"></script>
-<script src="atomicBase/AtomicArray.js"></script>
-<script src="atomicBase/AtomicObject.js"></script>
-<script src="atomicBase/AtomicPriority.js"></script>
-<script src="atomicBase/Server.js"></script>
+<script src="vendors/atomicBase/Database.js"></script>
+<script src="vendors/atomicBase/DatabaseUtilities.js"></script>
+<script src="vendors/atomicBase/RefRegistrator.js"></script>
+<script src="vendors/atomicBase/ValueHandler.js"></script>
+<script src="vendors/atomicBase/Schema.js"></script>
+<script src="vendors/atomicBase/SchemaUtilities.js"></script>
+<script src="vendors/atomicBase/Query.js"></script>
+<script src="vendors/atomicBase/AtomicArray.js"></script>
+<script src="vendors/atomicBase/AtomicObject.js"></script>
+<script src="vendors/atomicBase/AtomicFile.js"></script>
+<script src="vendors/atomicBase/AtomicPriority.js"></script>
+<script src="vendors/atomicBase/Server.js"></script>
 
 
 
@@ -129,6 +78,15 @@
 <script src="app.js"></script>
 
 
+<!-- Atomic Array Wrapper and Inifinite Scroll functionality-->
+<script src="vendors/AtomicArrayWrapper/atomicArrayWrapper.js"></script>
+
+<!-- Infinite Scroll -->
+<script src="vendors/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
+
+<!-- Angular Grid -->
+<script src="vendors/bower_components/angulargrid/angulargrid.min.js"></script>
+
 
 <!-- Modules -->
 <script src="components/modules/Task.Class.js"></script>
@@ -136,7 +94,7 @@
 <script src="components/modules/Group.Class.js"></script>
 
 <!-- App Components -->
-<script src="components/app/app.js"></script>
+<script src="components/app/documentation.js"></script>
 <script src="components/app/tasks/tasks.js"></script>
 <script src="components/app/users/users.js"></script>
 <script src="components/app/groups/groups.js"></script>
@@ -153,17 +111,17 @@
      * */
 
     var config = {
-        apiKey: "AIzaSyDYpePpdmeLqgrUylau9P4MmwzLuAefXIo",
-        authDomain: "atomicfirebase.firebaseapp.com",
-        databaseURL: "https://atomicfirebase.firebaseio.com",
-        storageBucket: "atomicfirebase.appspot.com",
-        messagingSenderId: "544536969512"
+        apiKey: "AIzaSyDBSoMbIkPn2dLRJ9Bwc8U1zZA83YhnDy8",
+        authDomain: "atomicbase-4e87b.firebaseapp.com",
+        databaseURL: "https://atomicbase-4e87b.firebaseio.com",
+        storageBucket: "atomicbase-4e87b.appspot.com",
+        messagingSenderId: "383724933186"
     };
 
     firebase.initializeApp(config);
 
     /*
-    * Not required in Atomic Firebase
+    * Not required in AtomicBase
     * */
     //var rootRef = firebase.database().ref();
 

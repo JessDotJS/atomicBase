@@ -1,0 +1,26 @@
+<div layout="column">
+    <div flex>
+        <div style="margin-top: 120px;" ng-show="!contentLoaded">
+            <loader show="!contentLoaded"></loader>
+        </div>
+
+        <div ng-show="contentLoaded" ng-class="{'{{viewObject.animation}}': viewObject.animation}">
+            <div ng-include="viewObject.templateUrl"></div>
+        </div>
+
+
+        <md-list>
+            <md-divider></md-divider>
+            <md-list-item  ng-hide="fetching()" ng-click="nextLot()" aria-label="Wrapper">
+                <div layout="row" layout-align="center center" flex>
+                    <h3 class="md-subhead">Ver más</h3>
+                </div>
+            </md-list-item>
+        </md-list>
+    </div>
+
+    <div style="margin-top: 120px;" ng-show="fetching()">
+        <loader show="fetching()"></loader>
+    </div>
+</div>
+

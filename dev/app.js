@@ -2,7 +2,7 @@
  * Module Init
  * */
 
-var af = angular.module('afSchema', ['ngAnimate', 'ngMaterial', 'ui.router', 'angularAnimation']);
+var af = angular.module('afSchema', ['ngAnimate', 'ngMaterial', 'ui.router', 'angularAnimation', 'angularGrid', 'infinite-scroll']);
 
 
 
@@ -11,28 +11,13 @@ var af = angular.module('afSchema', ['ngAnimate', 'ngMaterial', 'ui.router', 'an
  * */
 af.config(['$stateProvider', '$urlRouterProvider',
     function($stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.otherwise("/app");
+        $urlRouterProvider.otherwise("/documentation");
 
         $stateProvider
-            .state('intro', {
-                url: '/intro',
-                template: '<intro></intro>'
+            .state('documentation', {
+                url: '/documentation',
+                template: '<documentation></documentation>'
             })
-
-            .state('app', {
-                url: '/app',
-                template: '<app></app>',
-                abstract: true
-            })
-
-
-            .state('app.dashboard', {
-                url: '/dashboard',
-                template: '<dashboard></dashboard>',
-                abstract: true
-            })
-
-
     }]);
 
 /*
@@ -40,7 +25,7 @@ af.config(['$stateProvider', '$urlRouterProvider',
  * */
 af.run(['$rootScope', '$timeout', '$mdSidenav',
     function($rootScope, $timeout, $mdSidenav) {
-        $rootScope.toggleSideNav = function(){
+        /*$rootScope.toggleSideNav = function(){
             if($mdSidenav('right').isOpen()){
                 $mdSidenav('right').close();
             }else{
@@ -54,7 +39,7 @@ af.run(['$rootScope', '$timeout', '$mdSidenav',
                 if($mdSidenav('right').isOpen()){
                     $mdSidenav('right').close();
                 }
-            });
+            });*/
     }]);
 
 

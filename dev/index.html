@@ -2,13 +2,17 @@
 <html lang="en" ng-app="afSchema">
 <head>
     <meta charset="UTF-8">
-    <title>Atomic Firebase</title>
+    <title>Atomic Base</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="vendors/bower_components/angular-material/angular-material.min.css">
     <link rel="stylesheet" href="vendors/bower_components/animate.css/animate.min.css">
     <link rel="stylesheet" href="vendors/bower_components/angularAnimation/src/dist/angularAnimation.css">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
+
+    <script src="https://use.fontawesome.com/dd9fc03d33.js"></script>
 </head>
 <body style="overflow-y: hidden">
 
@@ -19,19 +23,30 @@
                         md-whiteframe="10"
                         style="margin:0px;">
                 <div class="md-toolbar-tools">
+                    <a class="md-icon-button"
+                       aria-label="Menu" href="https://github.com/JessDotJS/atomicBase" target="_blank">
+                        <md-icon md-font-icon="fa-github" class="fa fa-2x" alt="Github"></md-icon>
+                    </a>
                     <h2 style="margin-left:5px;">
                         <span>AtomicBase</span>
                     </h2>
                     <span flex></span>
-                    Made with &hearts; by <a href="https://github.com/JessDotJS" target="_blank">JessDotJS</a>
+                    <span style="font-size:14px;">
+                        Made with &hearts; by
+                        <a href="https://github.com/JessDotJS" target="_blank">JessDotJS</a>
+                    </span>
                 </div>
             </md-toolbar>
-            <div class="md-padding" style="overflow-y: scroll" flex>
-                <div animation="'auto'"
-                     in="'zoomInUp'"
-                     out="'zoomOutDown'"
-                     ui-view></div>
+
+            <div layout="row" flex>
+                <div class="md-padding" style="overflow-y: scroll" flex>
+                    <div animation="'auto'"
+                         in="'zoomIn'"
+                         out="'zoomOut'"
+                         ui-view></div>
+                </div>
             </div>
+
         </div>
     </div>
 
@@ -51,35 +66,13 @@
 <!-- Firebase -->
 <script src="vendors/bower_components/firebase/firebase.js"></script>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
 
-
-
-
-<!---------------------------
-    Atomic Firebase Database
----------------------------->
-<script src="vendors/atomicBase/Database.js"></script>
-<script src="vendors/atomicBase/DatabaseUtilities.js"></script>
-<script src="vendors/atomicBase/RefRegistrator.js"></script>
-<script src="vendors/atomicBase/ValueHandler.js"></script>
-<script src="vendors/atomicBase/Schema.js"></script>
-<script src="vendors/atomicBase/SchemaUtilities.js"></script>
-<script src="vendors/atomicBase/Query.js"></script>
-<script src="vendors/atomicBase/AtomicArray.js"></script>
-<script src="vendors/atomicBase/AtomicObject.js"></script>
-<script src="vendors/atomicBase/AtomicFile.js"></script>
-<script src="vendors/atomicBase/AtomicPriority.js"></script>
-<script src="vendors/atomicBase/Server.js"></script>
-
-
-
-
+<script src="https://pc035860.github.io/angular-highlightjs/angular-highlightjs.min.js"></script>
 
 <script src="app.js"></script>
 
 
-<!-- Atomic Array Wrapper and Inifinite Scroll functionality-->
-<script src="vendors/AtomicArrayWrapper/atomicArrayWrapper.js"></script>
 
 <!-- Infinite Scroll -->
 <script src="vendors/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
@@ -88,16 +81,11 @@
 <script src="vendors/bower_components/angulargrid/angulargrid.min.js"></script>
 
 
-<!-- Modules -->
-<script src="components/modules/Task.Class.js"></script>
-<script src="components/modules/User.Class.js"></script>
-<script src="components/modules/Group.Class.js"></script>
 
 <!-- App Components -->
 <script src="components/app/documentation.js"></script>
-<script src="components/app/tasks/tasks.js"></script>
-<script src="components/app/users/users.js"></script>
-<script src="components/app/groups/groups.js"></script>
+
+
 
 
 

@@ -2,22 +2,30 @@
  * Module Init
  * */
 
-var af = angular.module('afSchema', ['ngAnimate', 'ngMaterial', 'ui.router', 'angularAnimation', 'angularGrid', 'infinite-scroll']);
+var af = angular.module('afSchema', ['ngAnimate', 'ngMaterial', 'ui.router', 'angularAnimation',
+    'angularGrid', 'infinite-scroll', 'hljs']);
 
 
 
 /*
  * Routes Config
  * */
-af.config(['$stateProvider', '$urlRouterProvider',
-    function($stateProvider, $urlRouterProvider) {
+af.config(['$stateProvider', '$urlRouterProvider', 'hljsServiceProvider',
+    function($stateProvider, $urlRouterProvider, hljsServiceProvider) {
         $urlRouterProvider.otherwise("/documentation");
 
         $stateProvider
             .state('documentation', {
                 url: '/documentation',
                 template: '<documentation></documentation>'
-            })
+            });
+
+
+
+        hljsServiceProvider.setOptions({
+            // replace tab with 4 spaces
+            tabReplace: '    '
+        });
     }]);
 
 /*

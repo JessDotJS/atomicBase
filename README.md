@@ -1,4 +1,4 @@
-# atomicBase a Firebase Framework
+# AtomicBase, a Firebase Framework
 What is AtomicBase?
 AtomicBase is a lightweight Firebase Framework  built in ECMA5.
 When working on applications that can potentially reach a large scale we know we can always count on NoSQL Structures and amazing SPA frameworks.

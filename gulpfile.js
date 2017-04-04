@@ -13,56 +13,31 @@ var runSequence = require('run-sequence');
 
 
 
-gulp.task('minify-js', function() {
-    gulp.src(['./dev/**/*.js', '!./dev/vendors/**'])
+gulp.task('minify', function() {
+    gulp.src(['./dist/*.js'])
 
         .pipe(uglify({
             // inSourceMap:
             // outSourceMap: "app.js.map"
         }))
-        .pipe(gulp.dest('./app'))
+        .pipe(gulp.dest('./dist'))
 });
-
-gulp.task('copy-vendors', function () {
-    gulp.src(['./dev/vendors/**'])
-        .pipe(gulp.dest('dist/vendors'));
-});
-
-gulp.task('clean', function() {
-    gulp.src(['./dist/*'])
-        .pipe(clean({force: true}));
-});
-
-gulp.task('connect-dev', function () {
-    connect.server({
-        root: 'dev/',
-        port: 5555
-    });
-});
-
-gulp.task('connect-build', function () {
-    connect.server({
-        root: 'app/',
-        port: 7777
-    });
-});
-
 
 gulp.task('concat', function() {
     return gulp.src(
         [
-            './dev/atomicBase/Database.js',
-            './dev/atomicBase/DatabaseUtilities.js',
-            './dev/atomicBase/RefRegistrator.js',
-            './dev/atomicBase/ValueHandler.js',
-            './dev/atomicBase/Schema.js',
-            './dev/atomicBase/SchemaUtilities.js',
-            './dev/atomicBase/Query.js',
-            './dev/atomicBase/AtomicArray.js',
-            './dev/atomicBase/AtomicObject.js',
-            './dev/atomicBase/AtomicPriority.js',
-            './dev/atomicBase/AtomicFile.js',
-            './dev/atomicBase/Server.js'
+            './dev/vendors/atomicBase/Database.js',
+            './dev/vendors/atomicBase/DatabaseUtilities.js',
+            './dev/vendors/atomicBase/RefRegistrator.js',
+            './dev/vendors/atomicBase/ValueHandler.js',
+            './dev/vendors/atomicBase/Schema.js',
+            './dev/vendors/atomicBase/SchemaUtilities.js',
+            './dev/vendors/atomicBase/Query.js',
+            './dev/vendors/atomicBase/AtomicArray.js',
+            './dev/vendors/atomicBase/AtomicObject.js',
+            './dev/vendors/atomicBase/AtomicPriority.js',
+            './dev/vendors/atomicBase/AtomicFile.js',
+            './dev/vendors/atomicBase/Server.js'
         ])
         .pipe(concat('atomicBase.min.js'))
         .pipe(gulp.dest('./dist/'));
@@ -76,6 +51,11 @@ gulp.task('minify-concat', function() {
             // outSourceMap: "app.js.map"
         }))
         .pipe(gulp.dest('./dist'))
+});
+
+gulp.task('clean', function() {
+    gulp.src(['./dist/*'])
+        .pipe(clean({force: true}));
 });
 
 gulp.task('build-dist', function() {
@@ -93,6 +73,7 @@ gulp.task('default', ['connect-dev']);
 gulp.task('build', function() {
     runSequence(
         ['clean'],
-        ['copy-vendors', 'copy-assets', 'minify-css', 'minify-js', 'copy-html-files', 'connect-build']
+        ['concat'],
+        ['minify']
     );
 });
